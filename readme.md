@@ -62,6 +62,34 @@ Extension may implement all 6 events or just one. Available events are these:
 - `success (payload)` - called after successful request
 - `complete` - called after any request
 
+Event callbacks receive arguments as shown in parentheses. All of them also get instance of plugin itself as last argument. That means both markups are equivalent:
+
+```js
+success: function () {
+	$.nette.load();
+}
+```
+
+```js
+success: function (nette) {
+	nette.load();
+}
+```
+
+Extension may be disabled by calling: `$.nette.ext('name', null);`. You can also modify it directly - just grab the instance of extension by calling `$.nette.ext('name');` without other arguments. Structure of extension:
+
+```js
+// event callbacks are in 'on' namespace
+$.nette.ext('snippets').on.complete
+```
+
+```js
+// context of extension
+$.nette.ext('unique').context
+```
+
+Any manipulation with extensions is forbidden after the initialization. Please setup everything before `init()` call.
+
 ## Default extensions
 
 ### Snippets
