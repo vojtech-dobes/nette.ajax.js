@@ -23,7 +23,8 @@ var nette = function () {
 			before: {},
 			start: {},
 			success: {},
-			complete: {}
+			complete: {},
+			error: {}
 		},
 		fire: function () {
 			var result = true;
@@ -51,6 +52,9 @@ var nette = function () {
 					},
 					complete: function () {
 						inner.fire('complete');
+					},
+					error: function () {
+						inner.fire('error');
 					}
 				});
 				inner.fire('start', req);
@@ -95,7 +99,7 @@ var nette = function () {
 		inner.initialized = true;
 
 		$.each(inner.extensions, function (index, extension) {
-			$.each(['init', 'load', 'before', 'start', 'success', 'complete'], function (index, reaction) {
+			$.each(['init', 'load', 'before', 'start', 'success', 'complete', 'error'], function (index, reaction) {
 				if (extension !== undefined) {
 					if (extension.on[reaction] !== undefined) {
 						inner.on[reaction][extension.name] = extension.on[reaction];
