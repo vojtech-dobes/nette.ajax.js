@@ -71,7 +71,7 @@ success: function () {
 ```
 
 ```js
-success: function (nette) {
+success: function (payload, nette) {
 	nette.load();
 }
 ```
