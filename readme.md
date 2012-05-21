@@ -17,7 +17,9 @@ MIT
 
 It works as a jQuery plugin. As well known `jquery.nette.js`, it installs itself into `$.nette`. But similarities end here.
 
-You have to explicitly initialize plugin via method `init`. It accepts hash of callbacks, or if only function is provided, callback for `load` event. You should ajaxify all elements you wish here with handler which yout callback will get as first argument.
+You have to explicitly initialize plugin via method `init`. Plugin has predefined hooks for links and forms with `ajax` CSS class. You may alter the selectors via setting `$.nette.ext('init').context.linkSelector` or `$.nette.ext('init').context.formSelector` to whatever you wish. Or you may redefine ajaxfifying routine completely:
+
+Method `init()` accepts hash of callbacks, or if only function is provided, callback for `load` event. You should ajaxify all elements you wish here with handler which your callback will receive as first argument.
 
 ```js
 $.nette.init(function (handler) {
@@ -42,7 +44,7 @@ You're ready to go.
 
 ## Extensions
 
-Almost every functionality is implemented via set of 6 available events under the hood. You may hook them via concept of extensions. Every extension consists of 3 elements: name, set of event callbacks and some default context for storing values etc.
+Almost every functionality is implemented via set of 7 available events under the hood. You may hook them via concept of extensions. Every extension consists of 3 elements: name, set of event callbacks and some default context for storing values etc.
 
 ```js
 $.nette.ext('name', {
@@ -53,7 +55,7 @@ $.nette.ext('name', {
 
 Context is shared in every event callbacks and accessible via `this`.
 
-Extension may implement all 6 events or just one. Available events are these:
+Extension may implement all 7 events or just one. Available events are these:
 
 - `init` -  called just once
 - `load (ajaxHandler)` - may be called more times (called at the end of `init()` method automatically)
@@ -61,6 +63,7 @@ Extension may implement all 6 events or just one. Available events are these:
 - `start (req)` - called immediatelly after creation of request
 - `success (payload)` - called after successful request
 - `complete` - called after any request
+- `error` - called after failed request
 
 Event callbacks receive arguments as shown in parentheses. All of them also get instance of plugin itself as last argument. That means both markups are equivalent:
 

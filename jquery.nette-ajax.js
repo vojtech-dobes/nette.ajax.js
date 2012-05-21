@@ -112,13 +112,13 @@ var nette = function () {
 
 	this.init = function (load, loadContext) {
 		if (typeof load == 'function') {
-			this.ext('n:init', null);
-			this.ext('n:init', {
+			this.ext('init', null);
+			this.ext('init', {
 				load: load,
 			}, loadContext);
 		} else if (typeof load == 'object') {
-			this.ext('n:init', null);
-			this.ext('n:init', load, loadContext);
+			this.ext('init', null);
+			this.ext('init', load, loadContext);
 		} else if (load !== undefined) {
 			throw 'Argument of init() can be function or function-hash only.';
 		} else {
@@ -229,7 +229,7 @@ $.nette.ext('unique', {
 }, {req: null});
 
 // current page state
-$.nette.ext('n:init', {
+$.nette.ext('init', {
 	load: function (rh) {
 		$(this.linkSelector).off('click', rh).on('click', rh);
 		var $forms = $(this.formSelector);
