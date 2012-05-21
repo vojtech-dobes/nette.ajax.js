@@ -132,7 +132,7 @@ $.nette.ext('snippets', {
 	}
 }, {
 	updateSnippet: function (id, html) {
-		var $el = $('#' + id);
+		var $el = $('#' + this.escapeSelector(id));
 		// Fix for setting document title in IE
 		if ($el.eq(0).tagName == 'TITLE') {
 			document.title = html;
@@ -142,6 +142,10 @@ $.nette.ext('snippets', {
 	},
 	applySnippet: function ($el, html) {
 		$el.html(html);
+	},
+	escapeSelector: function (selector) {
+		// thx to @uestla (https://github.com/uestla)
+		return selector.replace(/[\!"#\$%&'\(\)\*\+,\.\/:;<=>\?@\[\\\]\^`\{\|\}~]/g, '\\$&');
 	}
 });
 
