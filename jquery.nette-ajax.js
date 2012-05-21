@@ -39,10 +39,19 @@ var nette = function () {
 		requestHandler: function (e) {
 			e.preventDefault();
 			if (inner.fire('before', this)) {
-				var req = $.post(this.href, {}, function (payload) {
-					inner.fire('success', payload);
-				}).complete(function () {
-					inner.fire('complete');
+				var $el, data = {};
+
+				$el = $(this);
+				var req = $.ajax({
+					url: this.href,
+					data: data,
+					type: 'get',
+					success: function (payload) {
+						inner.fire('success', payload);
+					},
+					complete: function () {
+						inner.fire('complete');
+					}
 				});
 				inner.fire('start', req);
 			}
@@ -178,5 +187,17 @@ $.nette.ext('unique', {
 		this.req = null;
 	}
 }, {req: null});
+
+// current page state
+$.nette.ext('n:init', {
+	load: function (rh) {
+		$(this.linkSelector).off('click', rh).on('click', rh);
+	},
+	success: function () {
+		$.nette.load();
+	}
+}, {
+	linkSelector: 'a.ajax'
+});
 
 })(jQuery);
