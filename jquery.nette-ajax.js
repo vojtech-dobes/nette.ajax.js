@@ -42,7 +42,7 @@ var nette = function () {
 		createRequestHandler: function () {
 			return function (e) {
 				e.preventDefault();
-				if (inner.fire('before', this.href)) {
+				if (inner.fire('before', this)) {
 					var req = $.post(this.href, {}, function (payload) {
 						inner.fire('success', payload);
 					}).complete(function () {
@@ -147,8 +147,8 @@ $.nette.ext('redirect', {
 
 // change URL (requires HTML5)
 $.nette.ext('history', {
-	before: function (href) {
-		this.href = href;
+	before: function (ui) {
+		this.href = ui.href;
 	},
 	success: function (payload) {
 		if (payload.url) {

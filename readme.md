@@ -1,0 +1,81 @@
+## For Nette Framework
+
+Flexible utility script for AJAX. Supports snippets, redirects etc.
+
+## License
+
+MIT
+
+## Installation
+
+1. Get the source code from Github.
+2. Move `jquery.nette-ajax.js` to your directory with Javascript files.
+3. Link the file in your templates.
+4. Put somewhere the initialization routine. See `main.js` for inspiration.
+
+## Usage
+
+It works as a jQuery plugin. As well known `jquery.nette.js`, it installs itself into `$.nette`. But similarities end here.
+
+You have to explicitly initialize plugin via method `init`. It accepts hash of callbacks, or if only function is provided, callback for `load` event. You should ajaxify all elements you wish here with handler which yout callback will get as first argument.
+
+```js
+$.nette.init(function (handler) {
+	$('a.ajax').click(handler);
+});
+```
+
+Another useful routine is registering reajaxification after snippets invalidation. Of course, you may use `live()`, but it's not too effective. Rather reload the plugin after successful request. See updated code:
+
+```js
+$.nette.init({
+	load: function (h) {
+		$('a.ajax').off('click', h).on('click', handler);
+	},
+	success: function () {
+		$.nette.load();
+	}
+});
+```
+
+You're ready to go.
+
+## Extensions
+
+Almost every functionality is implemented via set of 6 available events under the hood. You may hook them via concept of extensions. Every extension consists of 3 elements: name, set of event callbacks and some default context for storing values etc.
+
+```js
+$.nette.ext('name', {
+	nameOfEvent: function () { ... },
+	...
+}, {foo: bar});
+```
+
+Context is shared in every event callbacks and accessible via `this`.
+
+Extension may implement all 6 events or just one. Available events are these:
+
+- `init` -  called just once
+- `load (ajaxHandler)` - may be called more times (called at the end of `init()` method automatically)
+- `before (ui)` - called before AJAX request is created
+- `start (req)` - called immediatelly after creation of request
+- `success (payload)` - called after successful request
+- `complete` - called after any request
+
+## Default extensions
+
+### Snippets
+
+Classic implementation from the original script.
+
+### Redirect
+
+Classic implementation from the original script also.
+
+### History
+
+Takes care of saving the state to browser history if possible.
+
+### Unique
+
+Ensures there is always just one request running.

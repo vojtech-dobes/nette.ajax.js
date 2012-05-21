@@ -8,8 +8,8 @@ $(function () {
 	};
 
 	$.nette.init({
-		load: function (handler) {
-			$('a.ajax').on('click', handler);
+		load: function (h) {
+			$('a.ajax').off('click', h).on('click', h);
 		},
 		success: function (payload, nette) {
 			nette.load();
