@@ -40,13 +40,42 @@ var nette = function () {
 		requestHandler: function (e) {
 			e.preventDefault();
 			if (inner.fire('before', this)) {
-				var $el, data = {};
+				var $el, $form, isForm, isSubmit, data = {};
 
 				$el = $(this);
+
+				if ((isForm = $el.is('form')) || (isSubmit = $el.is(':submit'))) {
+					if (isSubmit) {
+						$form = $el.closest('form');
+						data[$el.attr('name')] = $el.val() || '';
+					} else if (isForm) {
+						$form = $el;
+					} else {
+						return;
+					}
+
+					if ($form.get(0).onsubmit && !$form.get(0).onsubmit()) return null;
+
+					var values = $form.serializeArray();
+					for (var i = 0; i < values.length; i++) {
+						var name = values[i].name;
+						if (name in data) {
+							var val = data[name];
+							if (!(val instanceof Array)) {
+								val = [val];
+							}
+							val.push(values[i].value);
+							data[name] = val;
+						} else {
+							data[name] = values[i].value;
+						}
+					}
+				}
+
 				var req = $.ajax({
-					url: this.href,
+					url: $form ? $form.attr('action') : this.href,
 					data: data,
-					type: 'get',
+					type: $form ? $form.attr('method') : 'get',
 					success: function (payload) {
 						inner.fire('success', payload);
 					},
@@ -162,7 +191,10 @@ $.nette.ext('redirect', {
 // change URL (requires HTML5)
 $.nette.ext('history', {
 	before: function (ui) {
-		this.href = ui.href;
+		var $el = $(ui);
+		if ($el.is('a')) {
+			this.href = ui.href;
+		}
 	},
 	success: function (payload) {
 		if (payload.url) {
@@ -200,12 +232,16 @@ $.nette.ext('unique', {
 $.nette.ext('n:init', {
 	load: function (rh) {
 		$(this.linkSelector).off('click', rh).on('click', rh);
+		var $forms = $(this.formSelector);
+		$forms.off('submit', rh).on('submit', rh);
+		$forms.off('click', ':submit', rh).on('click', ':submit', rh);
 	},
 	success: function () {
 		$.nette.load();
 	}
 }, {
-	linkSelector: 'a.ajax'
+	linkSelector: 'a.ajax',
+	formSelector: 'form.ajax'
 });
 
 })(jQuery);
