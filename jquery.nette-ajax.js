@@ -36,18 +36,16 @@ var nette = function () {
 			});
 			return result;
 		},
-		createRequestHandler: function () {
-			return function (e) {
-				e.preventDefault();
-				if (inner.fire('before', this)) {
-					var req = $.post(this.href, {}, function (payload) {
-						inner.fire('success', payload);
-					}).complete(function () {
-						inner.fire('complete');
-					});
-					inner.fire('start', req);
-				}
-			};
+		requestHandler: function (e) {
+			e.preventDefault();
+			if (inner.fire('before', this)) {
+				var req = $.post(this.href, {}, function (payload) {
+					inner.fire('success', payload);
+				}).complete(function () {
+					inner.fire('complete');
+				});
+				inner.fire('start', req);
+			}
 		}
 	};
 
@@ -102,7 +100,7 @@ var nette = function () {
 	};
 
 	this.load = function () {
-		inner.fire('load', inner.createRequestHandler());
+		inner.fire('load', inner.requestHandler);
 	};
 };
 
