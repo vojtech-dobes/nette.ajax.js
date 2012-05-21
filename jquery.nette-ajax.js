@@ -70,10 +70,12 @@ var nette = function () {
 
 	this.init = function (load, loadContext) {
 		if (typeof load == 'function') {
+			this.ext('n:init', null);
 			this.ext('n:init', {
 				load: load,
 			}, loadContext);
 		} else if (typeof load == 'object') {
+			this.ext('n:init', null);
 			this.ext('n:init', load, loadContext);
 		} else if (load !== undefined) {
 			throw 'Argument of init() can be function or function-hash only.';
