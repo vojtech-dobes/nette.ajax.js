@@ -1,18 +1,15 @@
 /**
-* AJAX Nette Framwork plugin for jQuery
-*
-* @copyright Copyright (c) 2009, 2010 Jan Marek
-* @copyright Copyright (c) 2009, 2010 David Grudl
-* @copyright Copyright (c) 2012 Vojtěch Dobeš
-* @license MIT
-* @link http://nette.org/cs/extras/jquery-ajax
-*/
-
-if (typeof jQuery != 'function') {
-	console.log('jQuery was not loaded');
-}
+ * AJAX Nette Framwork plugin for jQuery
+ *
+ * @copyright Copyright (c) 2009, 2010 Jan Marek
+ * @copyright Copyright (c) 2009, 2010 David Grudl
+ * @copyright Copyright (c) 2012 Vojtěch Dobeš
+ * @license MIT
+ */
 
 (function($, undefined) {
+
+if (typeof $ != 'function') return;
 
 var nette = function () {
 	var inner = {
