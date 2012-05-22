@@ -11,15 +11,18 @@ MIT
 1. Get the source code from Github.
 2. Move `jquery.nette-ajax.js` to your directory with Javascript files.
 3. Link the file in your templates.
-4. Put somewhere the initialization routine. See `main.js` for inspiration.
+4. Put somewhere the initialization routine. See `example.main.js` for inspiration.
 
 ## Usage
 
 It works as a jQuery plugin. As well known `jquery.nette.js`, it installs itself into `$.nette`. But similarities end here.
 
-You have to explicitly initialize plugin via method `init`. Plugin has predefined hooks for links and forms with `ajax` CSS class. You may alter the selectors via setting `$.nette.ext('init').context.linkSelector` or `$.nette.ext('init').context.formSelector` to whatever you wish. Or you may redefine ajaxfifying routine completely:
+You have to explicitly initialize plugin via method `init`. Plugin has predefined hooks for links and forms with `ajax` CSS class. It may be enough for you. If you want to change the behavior, you may:
 
-Method `init()` accepts hash of callbacks, or if only function is provided, callback for `load` event. You should ajaxify all elements you wish here with handler which your callback will receive as first argument.
+* Alter the selectors via setting `$.nette.ext('init').context.linkSelector` or `$.nette.ext('init').context.formSelector` to whatever you wish.
+* Or you may redefine ajaxifying routine completely.
+
+Method `init()` accepts hash of event callbacks (if you provide just function instead, it will be considered callback for `load` event). `load` event callback is the right place, where you should ajaxify all elements you want. Callback will be called with with `handler` function as first argument:
 
 ```js
 $.nette.init(function (handler) {
@@ -27,20 +30,7 @@ $.nette.init(function (handler) {
 });
 ```
 
-Another useful routine is registering reajaxification after snippets invalidation. Of course, you may use `live()`, but it's not too effective. Rather reload the plugin after successful request. See updated code:
-
-```js
-$.nette.init({
-	load: function (h) {
-		$('a.ajax').off('click', h).on('click', handler);
-	},
-	success: function () {
-		$.nette.load();
-	}
-});
-```
-
-You're ready to go.
+That way or another, you're ready to go.
 
 ## Extensions
 
@@ -110,3 +100,11 @@ Takes care of saving the state to browser history if possible.
 ### Unique
 
 Ensures there is always just one request running.
+
+### Abort
+
+User can abort running request by pressing Escape.
+
+### Init
+
+Special extension with default ajaxifying implementation. `init()` called with arguments will override it.
