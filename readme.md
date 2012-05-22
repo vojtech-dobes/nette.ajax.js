@@ -6,10 +6,14 @@ Flexible utility script for AJAX. Supports snippets, redirects etc.
 
 MIT
 
+## Dependencies
+
+jQuery
+
 ## Installation
 
 1. Get the source code from Github.
-2. Move `jquery.nette-ajax.js` to your directory with Javascript files.
+2. Move `nette.ajax.js` to your directory with Javascript files.
 3. Link the file in your templates.
 4. Put somewhere the initialization routine. See `example.main.js` for inspiration.
 
