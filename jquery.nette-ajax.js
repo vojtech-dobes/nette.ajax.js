@@ -72,8 +72,12 @@ var nette = function () {
 					}
 				}
 
+			// thx to @vrana
+			var url = $form ? $form.attr('action') : this.href;
+			if (/:|^#/.test(url)) return;
+
 				var req = $.ajax({
-					url: $form ? $form.attr('action') : this.href,
+					url: url,
 					data: data,
 					type: $form ? $form.attr('method') : 'get',
 					success: function (payload) {
