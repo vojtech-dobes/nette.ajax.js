@@ -228,6 +228,25 @@ $.nette.ext('unique', {
 	}
 }, {req: null});
 
+// option to abort by ESC (thx to @vrana)
+$.nette.ext('abort', {
+	init: function () {
+		$('body').keydown($.proxy(function (e) {
+			if (this.req && (e.keyCode == 27 // Esc
+			&& !(e.ctrlKey || e.shiftKey || e.altKey || e.metaKey))
+			) {
+				this.req.abort();
+			}
+		}, this));
+	},
+	start: function (req) {
+		this.req = req;
+	},
+	complete: function () {
+		this.req = null;
+	}
+}, {req: null});
+
 // current page state
 $.nette.ext('init', {
 	load: function (rh) {
