@@ -37,45 +37,56 @@ var nette = function () {
 			});
 			return result;
 		},
+		explicitNoAjax: false,
 		requestHandler: function (e) {
-			e.preventDefault();
-			if (inner.fire('before', this)) {
-				var $el, $form, isForm, isSubmit, data = {};
+			e.stopPropagation();
 
-				$el = $(this);
+			// thx to @vrana
+			var explicitNoAjax = e.button || e.ctrlKey || e.shiftKey || e.altKey || e.metaKey;
 
-				if ((isForm = $el.is('form')) || (isSubmit = $el.is(':submit'))) {
-					if (isSubmit) {
-						$form = $el.closest('form');
-						data[$el.attr('name')] = $el.val() || '';
-					} else if (isForm) {
-						$form = $el;
-					} else {
-						return;
-					}
+			var $el = $(this), $form, isForm, isSubmit, data = {};
+			if ((isForm = $el.is('form')) || (isSubmit = $el.is(':submit'))) {
+				if (isSubmit) {
+					$form = $el.closest('form');
+					data[$el.attr('name')] = $el.val() || '';
+				} else if (isForm) {
+					$form = $el;
+				} else {
+					return;
+				}
 
-					if ($form.get(0).onsubmit && !$form.get(0).onsubmit()) return null;
+				if (explicitNoAjax && isSubmit) {
+					inner.explicitNoAjax = true;
+					return;
+				} else if (isForm && inner.explicitNoAjax) {
+					inner.explicitNoAjax = false;
+					return;
+				}
 
-					var values = $form.serializeArray();
-					for (var i = 0; i < values.length; i++) {
-						var name = values[i].name;
-						if (name in data) {
-							var val = data[name];
-							if (!(val instanceof Array)) {
-								val = [val];
-							}
-							val.push(values[i].value);
-							data[name] = val;
-						} else {
-							data[name] = values[i].value;
+				if ($form.get(0).onsubmit && !$form.get(0).onsubmit()) return null;
+
+				var values = $form.serializeArray();
+				for (var i = 0; i < values.length; i++) {
+					var name = values[i].name;
+					if (name in data) {
+						var val = data[name];
+						if (!(val instanceof Array)) {
+							val = [val];
 						}
+						val.push(values[i].value);
+						data[name] = val;
+					} else {
+						data[name] = values[i].value;
 					}
 				}
+			} else if (explicitNoAjax) return;
 
 			// thx to @vrana
 			var url = $form ? $form.attr('action') : this.href;
 			if (/:|^#/.test(url)) return;
 
+			if (inner.fire('before', this)) {
+				e.preventDefault();
 				var req = $.ajax({
 					url: url,
 					data: data,
