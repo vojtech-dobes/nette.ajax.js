@@ -126,6 +126,8 @@ var nette = function () {
 	};
 
 	this.init = function (load, loadContext) {
+		if (inner.initialized) throw 'Cannot initialize nette-ajax twice.';
+
 		if (typeof load == 'function') {
 			this.ext('init', null);
 			this.ext('init', {
@@ -136,8 +138,6 @@ var nette = function () {
 			this.ext('init', load, loadContext);
 		} else if (load !== undefined) {
 			throw 'Argument of init() can be function or function-hash only.';
-		} else {
-			if (inner.initialized) throw 'Cannot initialize nette-ajax twice.';
 		}
 
 		inner.initialized = true;
