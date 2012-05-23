@@ -110,19 +110,19 @@ var nette = function () {
 		if (inner.initialized) throw 'Cannot manipulate nette-ajax extensions after initialization.';
 
 		if (callbacks === undefined) {
-			return inner.extensions[name];
+			inner.extensions[name];
 		} else if (!callbacks) {
 			inner.extensions[name] = undefined;
-			return this;
 		} else if (inner.extensions[name]) {
 			throw 'Cannot override already registered nette-ajax extension.';
 		} else {
-			return inner.extensions[name] = {
+			inner.extensions[name] = {
 				name: name,
 				on: callbacks,
 				context: context
 			};
 		}
+		return this;
 	};
 
 	this.init = function (load, loadContext) {
