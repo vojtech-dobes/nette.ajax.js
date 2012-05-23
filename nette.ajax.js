@@ -106,6 +106,17 @@ var nette = function () {
 		}
 	};
 
+	/**
+	 * Allows manipulation with extensions.
+	 * When called with 1. argument only, it returns extension with given name.
+	 * When called with 2. argument equal to false, it removes extension entirely.
+	 * When called with 2. argument equal to hash of event callbacks, it adds new extension.
+	 *
+	 * @param  {string} Name of extension
+	 * @param  {bool|object|null} Set of callbacks for any events OR false for removing extension.
+	 * @param  {object|null} Context for added extension
+	 * @return {$.nette} Provides a fluent interface
+	 */
 	this.ext = function (name, callbacks, context) {
 		if (inner.initialized) throw 'Cannot manipulate nette-ajax extensions after initialization.';
 
@@ -125,6 +136,16 @@ var nette = function () {
 		return this;
 	};
 
+	/**
+	 * Initializes the plugin. Forbids any further modifications of extensions.
+	 * Fires 'init' event, then 'load' event.
+	 * When called with any arguments, it will overried default 'init' extension
+	 * with provided callbacks.
+	 *
+	 * @param  {function|object|null} Callback for 'load' event or entire set of callbacks for any events
+	 * @param  {object|null} Context provided for callbacks in first argument
+	 * @return {$.nette} Provides a fluent interface
+	 */
 	this.init = function (load, loadContext) {
 		if (inner.initialized) throw 'Cannot initialize nette-ajax twice.';
 
@@ -158,8 +179,14 @@ var nette = function () {
 		return this;
 	};
 
+	/**
+	 * Fires 'load' event
+	 *
+	 * @return {$.nette} Provides a fluent interface
+	 */
 	this.load = function () {
 		inner.fire('load', inner.requestHandler);
+		return this;
 	};
 };
 
