@@ -87,7 +87,7 @@ var nette = function () {
 
 			if (inner.fire('before', this)) {
 				e.preventDefault();
-				var req = $.ajax({
+				var xhr = $.ajax({
 					url: url,
 					data: data,
 					type: $form ? $form.attr('method') : 'get',
@@ -101,7 +101,7 @@ var nette = function () {
 						inner.fire('error');
 					}
 				});
-				inner.fire('start', req);
+				inner.fire('start', xhr);
 			}
 		}
 	};
@@ -232,37 +232,37 @@ $.nette.ext('state', {
 
 // abort last request if new started
 $.nette.ext('unique', {
-	start: function (req) {
+	start: function (xhr) {
 		if (this.req) {
-			this.req.abort();
+			this.xhr.abort();
 		}
-		this.req = req;
+		this.xhr = xhr;
 	},
 	complete: function () {
-		this.req = null;
+		this.xhr = null;
 	}
-}, {req: null});
+}, {xhr: null});
 
 // option to abort by ESC (thx to @vrana)
 $.nette.ext('abort', {
 	init: function () {
 		$('body').keydown($.proxy(function (e) {
-			if (this.req && (e.keyCode == 27 // Esc
+			if (this.xhr && (e.keyCode == 27 // Esc
 			&& !(e.ctrlKey || e.shiftKey || e.altKey || e.metaKey))
 			) {
-				this.req.abort();
+				this.xhr.abort();
 			}
 		}, this));
 	},
-	start: function (req) {
-		this.req = req;
+	start: function (xhr) {
+		this.xhr = xhr;
 	},
 	complete: function () {
-		this.req = null;
+		this.xhr = null;
 	}
-}, {req: null});
+}, {xhr: null});
 
-// current page state
+// default ajaxification (can be overriden in init())
 $.nette.ext('init', {
 	load: function (rh) {
 		$(this.linkSelector).off('click', rh).on('click', rh);
