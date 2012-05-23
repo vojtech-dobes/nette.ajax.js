@@ -8,7 +8,7 @@ MIT
 
 ## Dependencies
 
-jQuery
+- jQuery 1.7
 
 ## Installation
 
