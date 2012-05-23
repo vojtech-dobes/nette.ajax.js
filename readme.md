@@ -15,7 +15,7 @@ MIT
 1. Get the source code from Github.
 2. Move `nette.ajax.js` to your directory with Javascript files.
 3. Link the file in your templates.
-4. Put somewhere the initialization routine. See `example.main.js` for inspiration.
+4. Put somewhere the initialization routine. See `example.js` for inspiration.
 
 ## Usage
 

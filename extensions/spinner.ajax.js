@@ -2,7 +2,8 @@
 
 $.nette.ext('spinner', {
 	init: function () {
-		this.spinner = $('<div></div>').attr('id', this.spinnerId).appendTo('body').hide();
+		this.spinner = this.createSpinner();
+		this.spinner.appendTo('body').hide();
 	},
 	before: function () {
 		this.spinner.show(this.speed);
@@ -11,8 +12,10 @@ $.nette.ext('spinner', {
 		this.spinner.hide(this.speed);
 	}
 }, {
+	createSpinner: function () {
+		return $('<div></div>').attr('id', 'ajax-spinner');
+	},
 	spinner: null,
-	spinnerId: 'ajax-spinner',
 	speed: undefined,
 });
 
