@@ -82,13 +82,12 @@ var nette = function () {
 			} else if (explicitNoAjax) return;
 
 			// thx to @vrana
-			var url = $form ? $form.attr('action') : this.href;
-			if (/:|^#/.test(url)) return;
+			if (/:|^#/.test($form ? $form.attr('action') : $el.attr('href'))) return;
 
 			if (inner.fire('before', this)) {
 				e.preventDefault();
 				var xhr = $.ajax({
-					url: url,
+					url: $form ? $form.attr('action') : this.href,
 					data: data,
 					type: $form ? $form.attr('method') : 'get',
 					success: function (payload) {
