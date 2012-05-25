@@ -168,7 +168,13 @@ var nette = function () {
 					if (extension.on[reaction] !== undefined) {
 						inner.on[reaction][extension.name] = extension.on[reaction];
 					}
-					inner.contexts[extension.name] = extension.context ? extension.context : {};
+					inner.contexts[extension.name] = $.extend(extension.context ? extension.context : {}, {
+						ext: function (name) {
+							var ext = inner.contexts[name];
+							if (!ext) throw "Extension '" + extension.name + "' depends on disabled extension '" + name + "'.";
+							return ext;
+						}
+					});
 				}
 			});
 		});
