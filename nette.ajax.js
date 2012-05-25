@@ -44,11 +44,16 @@ var nette = function () {
 			// thx to @vrana
 			var explicitNoAjax = e.button || e.ctrlKey || e.shiftKey || e.altKey || e.metaKey;
 
-			var $el = $(this), $form, isForm, isSubmit, data = {};
-			if ((isForm = $el.is('form')) || (isSubmit = $el.is(':submit'))) {
+			var $el = $(this), $form, isForm = $el.is('form'), isSubmit = $el.is(':submit'), isImage = $el.is(':image'), data = {};
+
+			if (isForm || isSubmit || isImage) {
 				if (isSubmit) {
 					$form = $el.closest('form');
 					data[$el.attr('name')] = $el.val() || '';
+				} else if (isImage) {
+					$form = $el.closest('form');
+					data[$el.attr('name') + '.x'] = e.offsetX;
+					data[$el.attr('name') + '.y'] = e.offsetY;
 				} else if (isForm) {
 					$form = $el;
 				} else {
@@ -203,8 +208,9 @@ $.nette.ext('snippets', {
 }, {
 	updateSnippet: function (id, html) {
 		var $el = $('#' + this.escapeSelector(id));
-		// Fix for setting document title in IE
-		if ($el.eq(0).tagName == 'TITLE') {
+		if (html === null) {
+			$el.remove();
+		} else if ($el.eq(0).tagName == 'TITLE') { // Fix for setting document title in IE
 			document.title = html;
 		} else {
 			this.applySnippet($el, html);
