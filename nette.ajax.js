@@ -156,7 +156,7 @@ var nette = function () {
 		if (typeof load == 'function') {
 			this.ext('init', null);
 			this.ext('init', {
-				load: load,
+				load: load
 			}, loadContext);
 		} else if (typeof load == 'object') {
 			this.ext('init', null);
