@@ -208,8 +208,9 @@ $.nette.ext('snippets', {
 }, {
 	updateSnippet: function (id, html) {
 		var $el = $('#' + this.escapeSelector(id));
-		// Fix for setting document title in IE
-		if ($el.eq(0).tagName == 'TITLE') {
+		if (html === null) {
+			$el.remove();
+		} else if ($el.eq(0).tagName == 'TITLE') { // Fix for setting document title in IE
 			document.title = html;
 		} else {
 			this.applySnippet($el, html);
