@@ -202,13 +202,16 @@ $.nette.ext('snippets', {
 	}
 }, {
 	updateSnippet: function (id, html) {
-		var $el = $('#' + this.escapeSelector(id));
+		var $el = this.getElement(id);
 		// Fix for setting document title in IE
 		if ($el.eq(0).tagName == 'TITLE') {
 			document.title = html;
 		} else {
 			this.applySnippet($el, html);
 		}
+	},
+	getElement: function (id) {
+		return $('#' + this.escapeSelector(id));
 	},
 	applySnippet: function ($el, html) {
 		$el.html(html);
