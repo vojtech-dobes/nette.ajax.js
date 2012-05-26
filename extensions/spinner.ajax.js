@@ -3,7 +3,7 @@
 $.nette.ext('spinner', {
 	init: function () {
 		this.spinner = this.createSpinner();
-		this.spinner.appendTo('body').hide();
+		this.spinner.hide().appendTo('body');
 	},
 	before: function () {
 		this.spinner.show(this.speed);
