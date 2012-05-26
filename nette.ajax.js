@@ -213,10 +213,9 @@ $.nette.ext('snippets', {
 	}
 }, {
 	updateSnippet: function (id, html) {
-		var $el = $('#' + this.escapeSelector(id));
-		if (html === null) {
-			$el.remove();
-		} else if ($el.eq(0).tagName == 'TITLE') { // Fix for setting document title in IE
+		var $el = this.getElement(id);
+		// Fix for setting document title in IE
+		if ($el.eq(0).tagName == 'TITLE') {
 			document.title = html;
 		} else {
 			this.applySnippet($el, html);
@@ -226,7 +225,12 @@ $.nette.ext('snippets', {
 		return $('#' + this.escapeSelector(id));
 	},
 	applySnippet: function ($el, html) {
-		$el.html(html);
+		if (html === null) {
+			$el.remove();
+
+		} else {
+			$el.html(html);
+		}
 	},
 	escapeSelector: function (selector) {
 		// thx to @uestla (https://github.com/uestla)
