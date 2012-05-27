@@ -16,7 +16,7 @@ $.nette.ext('spinner', {
 		return $('<div></div>').attr('id', 'ajax-spinner');
 	},
 	spinner: null,
-	speed: undefined,
+	speed: undefined
 });
 
 })(jQuery);
