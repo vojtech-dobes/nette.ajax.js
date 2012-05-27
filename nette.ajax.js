@@ -89,16 +89,13 @@ var nette = function () {
 				var xhr = $.ajax({
 					url: $form ? $form.attr('action') : this.href,
 					data: data,
-					type: $form ? $form.attr('method') : 'get',
-					success: function (payload) {
-						inner.fire('success', payload);
-					},
-					complete: function () {
-						inner.fire('complete');
-					},
-					error: function () {
-						inner.fire('error');
-					}
+					type: $form ? $form.attr('method') : 'get'
+				}).done(function (payload) {
+					inner.fire('success', payload);
+				}).fail(function () {
+					inner.fire('error');
+				}).always(function () {
+					inner.fire('complete');
 				});
 				inner.fire('start', xhr);
 			}
