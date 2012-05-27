@@ -84,21 +84,23 @@ var nette = function () {
 			// thx to @vrana
 			if (/:|^#/.test($form ? $form.attr('action') : $el.attr('href'))) return;
 
-			if (inner.fire('before', this)) {
-				e.preventDefault();
-				var xhr = $.ajax({
-					url: $form ? $form.attr('action') : this.href,
-					data: data,
-					type: $form ? $form.attr('method') : 'get'
-				}).done(function (payload) {
-					inner.fire('success', payload);
-				}).fail(function () {
-					inner.fire('error');
-				}).always(function () {
-					inner.fire('complete');
-				});
-				inner.fire('start', xhr);
-			}
+			$.ajax({
+				beforeSend: $.proxy(function (xhr) {
+					if (inner.fire('before', this)) {
+						e.preventDefault();
+						inner.fire('start', xhr);
+					} else return false;
+				}, this),
+				url: $form ? $form.attr('action') : this.href,
+				data: data,
+				type: $form ? $form.attr('method') : 'get'
+			}).done(function (payload) {
+				inner.fire('success', payload);
+			}).fail(function () {
+				inner.fire('error');
+			}).always(function () {
+				inner.fire('complete');
+			});
 		}
 	};
 
