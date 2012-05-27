@@ -96,8 +96,8 @@ var nette = function () {
 				type: $form ? $form.attr('method') : 'get'
 			}).done(function (payload) {
 				inner.fire('success', payload);
-			}).fail(function () {
-				inner.fire('error');
+			}).fail(function (xhr, status, error) {
+				inner.fire('error', xhr, status, error);
 			}).always(function () {
 				inner.fire('complete');
 			});
