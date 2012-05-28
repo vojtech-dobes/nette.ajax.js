@@ -84,23 +84,11 @@ var nette = function () {
 			// thx to @vrana
 			if (/:|^#/.test($form ? $form.attr('action') : $el.attr('href'))) return;
 
-			$.ajax({
-				beforeSend: $.proxy(function (xhr) {
-					if (inner.fire('before', this)) {
-						e.preventDefault();
-						inner.fire('start', xhr);
-					} else return false;
-				}, this),
+			inner.self.ajax({
 				url: $form ? $form.attr('action') : this.href,
 				data: data,
 				type: $form ? $form.attr('method') : 'get'
-			}).done(function (payload) {
-				inner.fire('success', payload);
-			}).fail(function (xhr, status, error) {
-				inner.fire('error', xhr, status, error);
-			}).always(function () {
-				inner.fire('complete');
-			});
+			}, this, e);
 		}
 	};
 
@@ -191,6 +179,35 @@ var nette = function () {
 	this.load = function () {
 		inner.fire('load', inner.requestHandler);
 		return this;
+	};
+
+	/**
+	 * Executes AJAX request. Attaches listeners and events.
+	 *
+	 * @param  {object} settings
+	 * @param  {Element|null} ussually Anchor or Form
+	 * @param  {event|null} event causing the request
+	 * @return {jqXHR}
+	 */
+	this.ajax = function (settings, ui, e) {
+		if (ui) {
+			settings = $.extend({
+				beforeSend: function (xhr) {
+					if (inner.fire('before', ui)) {
+						e.preventDefault();
+						inner.fire('start', xhr);
+					} else return false;
+				}
+			}, settings);
+		}
+
+		return $.ajax(settings).done(function (payload) {
+			inner.fire('success', payload);
+		}).fail(function (xhr, status, error) {
+			inner.fire('error', xhr, status, error);
+		}).always(function () {
+			inner.fire('complete');
+		});
 	};
 };
 
