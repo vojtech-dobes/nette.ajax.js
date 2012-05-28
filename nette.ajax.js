@@ -44,11 +44,17 @@ var nette = function () {
 			// thx to @vrana
 			var explicitNoAjax = e.button || e.ctrlKey || e.shiftKey || e.altKey || e.metaKey;
 
-			var $el = $(this), $form, isForm, isSubmit, data = {};
-			if ((isForm = $el.is('form')) || (isSubmit = $el.is(':submit'))) {
+			var $el = $(this), $form, isForm = $el.is('form'), isSubmit = $el.is(':submit'), isImage = $el.is(':image'), data = {};
+
+			if (isForm || isSubmit || isImage) {
 				if (isSubmit) {
 					$form = $el.closest('form');
 					data[$el.attr('name')] = $el.val() || '';
+				} else if (isImage) {
+					$form = $el.closest('form');
+					var offset = $el.offset();
+					data[$el.attr('name') + '.x'] = e.pageX - offset.left;
+					data[$el.attr('name') + '.y'] = e.pageY - offset.top;
 				} else if (isForm) {
 					$form = $el;
 				} else {
@@ -319,6 +325,7 @@ $.nette.ext('init', {
 		$(this.linkSelector).off('click', rh).on('click', rh);
 		var $forms = $(this.formSelector);
 		$forms.off('submit', rh).on('submit', rh);
+		$forms.off('click', ':image', rh).on('click', ':image', rh);
 		$forms.off('click', ':submit', rh).on('click', ':submit', rh);
 	},
 	success: function () {
