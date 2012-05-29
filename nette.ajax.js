@@ -279,6 +279,10 @@ $.nette.ext('history', {
 	href: null,
 	popstate: null,
 	doPopstate: function (event) {
+		if (!window.history.ready && !event.originalEvent.state) {
+			return;
+		}
+
 		this.popstate = true;
 		$.nette.ajax({
 			url: event.originalEvent.state.href
