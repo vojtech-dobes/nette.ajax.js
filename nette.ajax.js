@@ -107,13 +107,13 @@ var nette = function () {
 	 * @param  {string} Name of extension
 	 * @param  {bool|object|null} Set of callbacks for any events OR false for removing extension.
 	 * @param  {object|null} Context for added extension
-	 * @return {$.nette} Provides a fluent interface
+	 * @return {$.nette|object} Provides a fluent interface OR returns extensions with given name
 	 */
 	this.ext = function (name, callbacks, context) {
 		if (inner.initialized) throw 'Cannot manipulate nette-ajax extensions after initialization.';
 
 		if (callbacks === undefined) {
-			inner.extensions[name];
+			return inner.extensions[name];
 		} else if (!callbacks) {
 			inner.extensions[name] = undefined;
 		} else if (inner.extensions[name]) {
