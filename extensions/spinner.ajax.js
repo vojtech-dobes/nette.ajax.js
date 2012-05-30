@@ -15,9 +15,7 @@ $.nette.ext('spinner', {
 	createSpinner: function () {
 		return $('<div>', {
 			id: 'ajax-spinner',
-			style: {
-				display: 'none'
-			}
+			style: 'display: none;'
 		});
 	},
 	spinner: null,
