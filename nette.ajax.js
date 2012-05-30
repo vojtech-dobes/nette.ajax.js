@@ -262,6 +262,10 @@ $.nette.ext('redirect', {
 
 // change URL (requires HTML5)
 $.nette.ext('history', {
+	init: function () {
+		history.pushState({href: document.URL}, '', document.URL);
+		$(window).bind('popstate', $.proxy( this.doPopstate, this ));
+	},
 	before: function (ui) {
 		var $el = $(ui);
 		if ($el.is('a')) {
@@ -272,11 +276,25 @@ $.nette.ext('history', {
 		if (payload.url) {
 			this.href = payload.url;
 		}
-		if (!payload.signal && window.history && history.pushState && this.href) {
+		if (!this.popstate && !payload.signal && window.history && history.pushState && this.href) {
 			history.pushState({href: this.href}, '', this.href);
 		}
+		this.popstate = null;
 	}
-}, {href: null});
+}, {
+	href: null,
+	popstate: null,
+	doPopstate: function (event) {
+		if (!window.history.ready && !event.originalEvent.state) {
+			return;
+		}
+
+		this.popstate = true;
+		$.nette.ajax({
+			url: event.originalEvent.state.href
+		});
+	}
+});
 
 // current page state
 $.nette.ext('state', {
