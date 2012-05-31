@@ -322,11 +322,11 @@ $.nette.ext('abort', {
 // default ajaxification (can be overriden in init())
 $.nette.ext('init', {
 	load: function (rh) {
-		$(this.linkSelector).off('click', rh).on('click', rh);
+		$(this.linkSelector).off('click.nette', rh).on('click.nette', rh);
 		var $forms = $(this.formSelector);
-		$forms.off('submit', rh).on('submit', rh);
-		$forms.off('click', ':image', rh).on('click', ':image', rh);
-		$forms.off('click', ':submit', rh).on('click', ':submit', rh);
+		$forms.off('submit.nette', rh).on('submit.nette', rh);
+		$forms.off('click.nette', ':image', rh).on('click.nette', ':image', rh);
+		$forms.off('click.nette', ':submit', rh).on('click.nette', ':submit', rh);
 	},
 	success: function () {
 		$.nette.load();
