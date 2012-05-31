@@ -327,13 +327,21 @@ $.nette.ext('init', {
 		$forms.off('submit.nette', rh).on('submit.nette', rh);
 		$forms.off('click.nette', ':image', rh).on('click.nette', ':image', rh);
 		$forms.off('click.nette', ':submit', rh).on('click.nette', ':submit', rh);
+
+		var buttonSelector = this.buttonSelector;
+		$(buttonSelector).each(function () {
+			$(this).closest('form')
+				.off('click.nette', buttonSelector, rh)
+				.on('click.nette', buttonSelector, rh);
+		});
 	},
 	success: function () {
 		$.nette.load();
 	}
 }, {
 	linkSelector: 'a.ajax',
-	formSelector: 'form.ajax'
+	formSelector: 'form.ajax',
+	buttonSelector: 'input.ajax:submit'
 });
 
 })(jQuery);
