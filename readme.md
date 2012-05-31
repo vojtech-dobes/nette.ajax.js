@@ -53,8 +53,8 @@ Extension may implement all 7 events or just one. Available events are these:
 
 - `init` -  called just once
 - `load (ajaxHandler)` - may be called more times (called at the end of `init()` method automatically)
-- `before (ui)` - called before AJAX request is created
-- `start (req)` - called immediatelly after creation of request
+- `before (settings, ui)` - called before AJAX request is created
+- `start (jqXHR)` - called immediatelly after creation of request
 - `success (payload)` - called after successful request
 - `complete` - called after any request
 - `error` - called after failed request
@@ -88,6 +88,10 @@ $.nette.ext('unique').context
 Any manipulation with extensions is forbidden after the initialization. Please setup everything before `init()` call.
 
 ## Default extensions
+
+### Forms
+
+Collects data from form elements
 
 ### Snippets
 

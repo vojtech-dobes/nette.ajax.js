@@ -39,63 +39,77 @@ var nette = function () {
 		},
 		explicitNoAjax: false,
 		requestHandler: function (e) {
-			e.stopPropagation();
-
-			// thx to @vrana
-			var explicitNoAjax = e.button || e.ctrlKey || e.shiftKey || e.altKey || e.metaKey;
-
-			var $el = $(this), $form, isForm = $el.is('form'), isSubmit = $el.is(':submit'), isImage = $el.is(':image'), data = {};
-
-			if (isForm || isSubmit || isImage) {
-				if (isSubmit) {
-					$form = $el.closest('form');
-					data[$el.attr('name')] = $el.val() || '';
-				} else if (isImage) {
-					$form = $el.closest('form');
-					var offset = $el.offset();
-					data[$el.attr('name') + '.x'] = e.pageX - offset.left;
-					data[$el.attr('name') + '.y'] = e.pageY - offset.top;
-				} else if (isForm) {
-					$form = $el;
-				} else {
-					return;
-				}
-
-				if (explicitNoAjax && isSubmit) {
-					inner.explicitNoAjax = true;
-					return;
-				} else if (isForm && inner.explicitNoAjax) {
-					inner.explicitNoAjax = false;
-					return;
-				}
-
-				if ($form.get(0).onsubmit && !$form.get(0).onsubmit()) return null;
-
-				var values = $form.serializeArray();
-				for (var i = 0; i < values.length; i++) {
-					var name = values[i].name;
-					if (name in data) {
-						var val = data[name];
-						if (!(val instanceof Array)) {
-							val = [val];
-						}
-						val.push(values[i].value);
-						data[name] = val;
-					} else {
-						data[name] = values[i].value;
-					}
-				}
-			} else if (explicitNoAjax) return;
-
-			// thx to @vrana
-			if (/:|^#/.test($form ? $form.attr('action') : $el.attr('href'))) return;
+			var analyze = inner.self.analyze(this);
+			if (!inner.self.validateEvent(analyze, e)) return;
 
 			inner.self.ajax({
-				url: $form ? $form.attr('action') : this.href,
-				data: data,
-				type: $form ? $form.attr('method') : 'get'
+				url: analyze.form ? analyze.form.attr('action') : this.href,
+				type: analyze.form ? analyze.form.attr('method') : 'get',
+				nette: analyze
 			}, this, e);
 		}
+	};
+
+	/**
+	 * Analyzes element for further checks
+	 *
+	 * @param  {Element}
+	 * @return {object}
+	 */
+	this.analyze = function (ui) {
+		var $el = $(ui);
+		var analyze = {
+			ui: ui,
+			el: $el,
+			isForm: $el.is('form'),
+			isSubmit: $el.is(':submit'),
+			isImage: $el.is(':image'),
+			form: null
+		};
+
+		if (analyze.isSubmit) {
+			analyze.form = analyze.el.closest('form');
+		} else if (analyze.isImage) {
+			analyze.form = analyze.el.closest('form');
+		} else if (analyze.isForm) {
+			analyze.form = analyze.el;
+		}
+
+		return analyze;
+	};
+
+	/**
+	 * Utilizes few checks whether request should be ajaxified
+	 * - pressing CTRL, SHIFT or ALT
+	 * - validation of form
+	 * - fragments in URL or absolute paths
+	 *
+	 * @param  {object}
+	 * @param  {event}
+	 * @return {bool}
+	 */
+	this.validateEvent = function (analyze, e) {
+		// thx to @vrana
+		var explicitNoAjax = e.button || e.ctrlKey || e.shiftKey || e.altKey || e.metaKey;
+
+		if (analyze.form) {
+			if (explicitNoAjax && analyze.isSubmit) {
+				inner.explicitNoAjax = true;
+				return false;
+			} else if (analyze.isForm && inner.explicitNoAjax) {
+				inner.explicitNoAjax = false;
+				return false;
+			}
+
+			if (analyze.form.get(0).onsubmit && !analyze.form.get(0).onsubmit()) return false;
+		} else if (explicitNoAjax) return false;
+
+		// thx to @vrana
+		if (/:|^#/.test(analyze.form ? analyze.form.attr('action') : analyze.el.attr('href'))) return false;
+
+		e.stopPropagation();
+		e.preventDefault();
+		return true;
 	};
 
 	/**
@@ -193,21 +207,23 @@ var nette = function () {
 	 * @param  {object} settings
 	 * @param  {Element|null} ussually Anchor or Form
 	 * @param  {event|null} event causing the request
-	 * @return {jqXHR}
+	 * @return {jqXHR|null}
 	 */
 	this.ajax = function (settings, ui, e) {
-		if (ui) {
-			settings = $.extend({
-				beforeSend: function (xhr) {
-					if (inner.fire('before', ui)) {
-						e.preventDefault();
-						inner.fire('start', xhr);
-					} else return false;
-				}
-			}, settings);
+		settings.data = settings.data || {};
+
+		if (!settings.nette && ui && e) {
+			settings.nette = this.analyze(ui);
+			if (!this.validateEvent(settings.nette, e)) return;
 		}
 
-		return $.ajax(settings).done(function (payload) {
+		if (!inner.fire('before', settings, ui, e)) return;
+
+		return $.ajax($.extend({
+			beforeSend: function (xhr) {
+				return inner.fire('start', xhr);
+			}
+		}, settings)).done(function (payload) {
 			inner.fire('success', payload);
 		}).fail(function (xhr, status, error) {
 			inner.fire('error', xhr, status, error);
@@ -218,6 +234,39 @@ var nette = function () {
 };
 
 $.nette = new ($.extend(nette, $.nette ? $.nette : {}));
+
+$.nette.ext('forms', {
+	before: function (settings, ui) {
+		var req = settings.nette;
+		if (!req) return;
+
+		if (req.form) {
+			if (req.isSubmit) {
+				settings.data[req.el.attr('name')] = req.el.val() || '';
+			} else if (req.isImage) {
+				var offset = req.el.offset();
+				var name = req.el.attr('name');
+				settings.data[name + '.x'] = e.pageX - offset.left;
+				settings.data[name + '.y'] = e.pageY - offset.top;
+			}
+
+			var values = nette.form.serializeArray();
+			for (var i = 0; i < values.length; i++) {
+				var name = values[i].name;
+				if (name in settings.data) {
+					var val = settings.data[name];
+					if (!(val instanceof Array)) {
+						val = [val];
+					}
+					val.push(values[i].value);
+					settings.data[name] = val;
+				} else {
+					settings.data[name] = values[i].value;
+				}
+			}
+		}
+	}
+});
 
 // default snippet handler
 $.nette.ext('snippets', {
@@ -266,7 +315,7 @@ $.nette.ext('history', {
 		history.pushState({href: document.URL}, '', document.URL);
 		$(window).bind('popstate', $.proxy( this.doPopstate, this ));
 	},
-	before: function (ui) {
+	before: function (settings, ui) {
 		var $el = $(ui);
 		if ($el.is('a')) {
 			this.href = ui.href;
