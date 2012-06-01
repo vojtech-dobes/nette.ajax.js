@@ -261,7 +261,7 @@ $.nette.ext('redirect', {
 });
 
 // change URL (requires HTML5)
-if (history.pushState) {
+if (!!(window.history && history.pushState)) { // check borrowed from Modernizr
 	$.nette.ext('history', {
 		before: function (ui) {
 			var $el = $(ui);
