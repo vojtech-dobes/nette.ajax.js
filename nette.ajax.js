@@ -261,22 +261,24 @@ $.nette.ext('redirect', {
 });
 
 // change URL (requires HTML5)
-$.nette.ext('history', {
-	before: function (ui) {
-		var $el = $(ui);
-		if ($el.is('a')) {
-			this.href = ui.href;
+if (history.pushState) {
+	$.nette.ext('history', {
+		before: function (ui) {
+			var $el = $(ui);
+			if ($el.is('a')) {
+				this.href = ui.href;
+			}
+		},
+		success: function (payload) {
+			if (payload.url) {
+				this.href = payload.url;
+			}
+			if (!payload.signal && window.history && history.pushState && this.href) {
+				history.pushState({href: this.href}, '', this.href);
+			}
 		}
-	},
-	success: function (payload) {
-		if (payload.url) {
-			this.href = payload.url;
-		}
-		if (!payload.signal && window.history && history.pushState && this.href) {
-			history.pushState({href: this.href}, '', this.href);
-		}
-	}
-}, {href: null});
+	}, {href: null});
+}
 
 // current page state
 $.nette.ext('state', {
