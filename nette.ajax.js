@@ -39,63 +39,76 @@ var nette = function () {
 		},
 		explicitNoAjax: false,
 		requestHandler: function (e) {
-			e.stopPropagation();
+			var analyze = inner.self.analyze(this);
+			analyze.explicitNoAjax = e.button || e.ctrlKey || e.shiftKey || e.altKey || e.metaKey; // thx to @vrana
 
-			// thx to @vrana
-			var explicitNoAjax = e.button || e.ctrlKey || e.shiftKey || e.altKey || e.metaKey;
-
-			var $el = $(this), $form, isForm = $el.is('form'), isSubmit = $el.is(':submit'), isImage = $el.is(':image'), data = {};
-
-			if (isForm || isSubmit || isImage) {
-				if (isSubmit) {
-					$form = $el.closest('form');
-					data[$el.attr('name')] = $el.val() || '';
-				} else if (isImage) {
-					$form = $el.closest('form');
-					var offset = $el.offset();
-					data[$el.attr('name') + '.x'] = e.pageX - offset.left;
-					data[$el.attr('name') + '.y'] = e.pageY - offset.top;
-				} else if (isForm) {
-					$form = $el;
-				} else {
-					return;
-				}
-
-				if (explicitNoAjax && isSubmit) {
-					inner.explicitNoAjax = true;
-					return;
-				} else if (isForm && inner.explicitNoAjax) {
-					inner.explicitNoAjax = false;
-					return;
-				}
-
-				if ($form.get(0).onsubmit && !$form.get(0).onsubmit()) return null;
-
-				var values = $form.serializeArray();
-				for (var i = 0; i < values.length; i++) {
-					var name = values[i].name;
-					if (name in data) {
-						var val = data[name];
-						if (!(val instanceof Array)) {
-							val = [val];
-						}
-						val.push(values[i].value);
-						data[name] = val;
-					} else {
-						data[name] = values[i].value;
-					}
-				}
-			} else if (explicitNoAjax) return;
-
-			// thx to @vrana
-			if (/:|^#/.test($form ? $form.attr('action') : $el.attr('href'))) return;
+			if (!inner.self.validateEvent(analyze, e)) return;
 
 			inner.self.ajax({
-				url: $form ? $form.attr('action') : this.href,
-				data: data,
-				type: $form ? $form.attr('method') : 'get'
+				nette: analyze
 			}, this, e);
 		}
+	};
+
+	/**
+	 * Analyzes element for further checks
+	 *
+	 * @param  {Element}
+	 * @return {object}
+	 */
+	this.analyze = function (ui) {
+		var $el = $(ui);
+		var analyze = {
+			ui: ui,
+			el: $el,
+			isForm: $el.is('form'),
+			isSubmit: $el.is(':submit'),
+			isImage: $el.is(':image'),
+			form: null,
+			explicitNoAjax: false
+		};
+
+		if (analyze.isSubmit || analyze.isImage) {
+			analyze.form = analyze.el.closest('form');
+		} else if (analyze.isForm) {
+			analyze.form = analyze.el;
+		}
+
+		analyze.url = analyze.form ? analyze.form.attr('action') : this.href;
+		analyze.type = analyze.form ? analyze.form.attr('method') : 'get';
+
+		return analyze;
+	};
+
+	/**
+	 * Utilizes few checks whether request should be ajaxified
+	 * - pressing CTRL, SHIFT or ALT
+	 * - validation of form
+	 * - fragments in URL or absolute paths
+	 *
+	 * @param  {object}
+	 * @param  {event}
+	 * @return {bool}
+	 */
+	this.validateEvent = function (analyze, e) {
+		if (analyze.form) {
+			if (analyze.explicitNoAjax && analyze.isSubmit) {
+				inner.explicitNoAjax = true;
+				return false;
+			} else if (analyze.isForm && inner.explicitNoAjax) {
+				inner.explicitNoAjax = false;
+				return false;
+			}
+
+			if (analyze.form.get(0).onsubmit && !analyze.form.get(0).onsubmit()) return false;
+		} else if (analyze.explicitNoAjax) return false;
+
+		// thx to @vrana
+		if (/:|^#/.test(analyze.form ? analyze.form.attr('action') : analyze.el.attr('href'))) return false;
+
+		e.stopPropagation();
+		e.preventDefault();
+		return true;
 	};
 
 	/**
@@ -193,21 +206,25 @@ var nette = function () {
 	 * @param  {object} settings
 	 * @param  {Element|null} ussually Anchor or Form
 	 * @param  {event|null} event causing the request
-	 * @return {jqXHR}
+	 * @return {jqXHR|null}
 	 */
 	this.ajax = function (settings, ui, e) {
-		if (ui) {
-			settings = $.extend({
-				beforeSend: function (xhr) {
-					if (inner.fire('before', ui)) {
-						e.preventDefault();
-						inner.fire('start', xhr);
-					} else return false;
-				}
-			}, settings);
-		}
+		settings.data = settings.data || {};
 
-		return $.ajax(settings).done(function (payload) {
+		if (!settings.nette && ui && e) {
+			settings.nette = this.analyze(ui);
+			if (!this.validateEvent(settings.nette, e)) return;
+		}
+		if (!settings.url) settings.url = settings.nette.url;
+		if (!settings.type) settings.type = settings.nette.type;
+
+		if (!inner.fire('before', settings, ui, e)) return;
+
+		return $.ajax($.extend({
+			beforeSend: function (xhr) {
+				return inner.fire('start', xhr);
+			}
+		}, settings)).done(function (payload) {
 			inner.fire('success', payload);
 		}).fail(function (xhr, status, error) {
 			inner.fire('error', xhr, status, error);
@@ -218,6 +235,42 @@ var nette = function () {
 };
 
 $.nette = new ($.extend(nette, $.nette ? $.nette : {}));
+
+$.nette.ext('forms', {
+	before: function (settings, ui, e) {
+		var req = settings.nette;
+		if (!req || !req.form) return;
+
+		if (req.isSubmit) {
+			settings.data[req.el.attr('name')] = req.el.val() || '';
+		} else if (req.isImage) {
+			var offset = req.el.offset();
+			var name = req.el.attr('name');
+			settings.data[name + '.x'] = e.pageX - offset.left;
+			settings.data[name + '.y'] = e.pageY - offset.top;
+		}
+
+		settings.data = this.serializeValues(req.form, settings.data);
+	}
+}, {
+	serializeValues: function ($form, data) {
+		var values = $form.serializeArray();
+		for (var i = 0; i < values.length; i++) {
+			var name = values[i].name;
+			if (name in data) {
+				var val = data[name];
+				if (!(val instanceof Array)) {
+					val = [val];
+				}
+				val.push(values[i].value);
+				data[name] = val;
+			} else {
+				data[name] = values[i].value;
+			}
+		}
+		return data;
+	}
+});
 
 // default snippet handler
 $.nette.ext('snippets', {
@@ -263,7 +316,11 @@ $.nette.ext('redirect', {
 // change URL (requires HTML5)
 if (!!(window.history && history.pushState)) { // check borrowed from Modernizr
 	$.nette.ext('history', {
-		before: function (ui) {
+		init: function () {
+			history.pushState({href: document.URL}, '', document.URL);
+			$(window).bind('popstate', $.proxy( this.doPopstate, this ));
+		},
+		before: function (settings, ui) {
 			var $el = $(ui);
 			if ($el.is('a')) {
 				this.href = ui.href;
@@ -273,11 +330,22 @@ if (!!(window.history && history.pushState)) { // check borrowed from Modernizr
 			if (payload.url) {
 				this.href = payload.url;
 			}
-			if (!payload.signal && window.history && history.pushState && this.href) {
+			if (!this.popstate && !payload.signal && window.history && history.pushState && this.href) {
 				history.pushState({href: this.href}, '', this.href);
 			}
+			this.popstate = null;
 		}
-	}, {href: null});
+	}, {
+		href: null,
+		popstate: null,
+		doPopstate: function (event) {
+			this.popstate = true;
+			if (!event.originalEvent.state) return;
+			$.nette.ajax({
+				url: event.originalEvent.state.href
+			});
+		}
+	});
 }
 
 // current page state
