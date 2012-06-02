@@ -43,8 +43,8 @@ var nette = function () {
 			if (!inner.self.validateEvent(analyze, e)) return;
 
 			inner.self.ajax({
-				url: analyze.form ? analyze.form.attr('action') : this.href,
-				type: analyze.form ? analyze.form.attr('method') : 'get',
+				url: analyze.url,
+				type: analyze.type,
 				nette: analyze
 			}, this, e);
 		}
@@ -67,13 +67,14 @@ var nette = function () {
 			form: null
 		};
 
-		if (analyze.isSubmit) {
-			analyze.form = analyze.el.closest('form');
-		} else if (analyze.isImage) {
+		if (analyze.isSubmit || analyze.isImage) {
 			analyze.form = analyze.el.closest('form');
 		} else if (analyze.isForm) {
 			analyze.form = analyze.el;
 		}
+
+		analyze.url = analyze.form ? analyze.form.attr('action') : this.href;
+		analyze.type = analyze.form ? analyze.form.attr('method') : 'get';
 
 		return analyze;
 	};
@@ -236,33 +237,31 @@ var nette = function () {
 $.nette = new ($.extend(nette, $.nette ? $.nette : {}));
 
 $.nette.ext('forms', {
-	before: function (settings, ui) {
+	before: function (settings, ui, e) {
 		var req = settings.nette;
-		if (!req) return;
+		if (!req || !req.form) return;
 
-		if (req.form) {
-			if (req.isSubmit) {
-				settings.data[req.el.attr('name')] = req.el.val() || '';
-			} else if (req.isImage) {
-				var offset = req.el.offset();
-				var name = req.el.attr('name');
-				settings.data[name + '.x'] = e.pageX - offset.left;
-				settings.data[name + '.y'] = e.pageY - offset.top;
-			}
+		if (req.isSubmit) {
+			settings.data[req.el.attr('name')] = req.el.val() || '';
+		} else if (req.isImage) {
+			var offset = req.el.offset();
+			var name = req.el.attr('name');
+			settings.data[name + '.x'] = e.pageX - offset.left;
+			settings.data[name + '.y'] = e.pageY - offset.top;
+		}
 
-			var values = nette.form.serializeArray();
-			for (var i = 0; i < values.length; i++) {
-				var name = values[i].name;
-				if (name in settings.data) {
-					var val = settings.data[name];
-					if (!(val instanceof Array)) {
-						val = [val];
-					}
-					val.push(values[i].value);
-					settings.data[name] = val;
-				} else {
-					settings.data[name] = values[i].value;
+		var values = req.form.serializeArray();
+		for (var i = 0; i < values.length; i++) {
+			var name = values[i].name;
+			if (name in settings.data) {
+				var val = settings.data[name];
+				if (!(val instanceof Array)) {
+					val = [val];
 				}
+				val.push(values[i].value);
+				settings.data[name] = val;
+			} else {
+				settings.data[name] = values[i].value;
 			}
 		}
 	}
@@ -336,6 +335,7 @@ if (!!(window.history && history.pushState)) { // check borrowed from Modernizr
 		popstate: null,
 		doPopstate: function (event) {
 			this.popstate = true;
+			if (!event.originalEvent.state) return;
 			$.nette.ajax({
 				url: event.originalEvent.state.href
 			});
