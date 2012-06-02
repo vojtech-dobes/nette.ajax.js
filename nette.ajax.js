@@ -43,8 +43,6 @@ var nette = function () {
 			if (!inner.self.validateEvent(analyze, e)) return;
 
 			inner.self.ajax({
-				url: analyze.url,
-				type: analyze.type,
 				nette: analyze
 			}, this, e);
 		}
@@ -217,6 +215,8 @@ var nette = function () {
 			settings.nette = this.analyze(ui);
 			if (!this.validateEvent(settings.nette, e)) return;
 		}
+		if (!settings.url) settings.url = settings.nette.url;
+		if (!settings.type) settings.type = settings.nette.type;
 
 		if (!inner.fire('before', settings, ui, e)) return;
 
