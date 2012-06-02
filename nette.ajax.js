@@ -40,6 +40,8 @@ var nette = function () {
 		explicitNoAjax: false,
 		requestHandler: function (e) {
 			var analyze = inner.self.analyze(this);
+			analyze.explicitNoAjax = e.button || e.ctrlKey || e.shiftKey || e.altKey || e.metaKey; // thx to @vrana
+
 			if (!inner.self.validateEvent(analyze, e)) return;
 
 			inner.self.ajax({
@@ -62,7 +64,8 @@ var nette = function () {
 			isForm: $el.is('form'),
 			isSubmit: $el.is(':submit'),
 			isImage: $el.is(':image'),
-			form: null
+			form: null,
+			explicitNoAjax: false
 		};
 
 		if (analyze.isSubmit || analyze.isImage) {
@@ -88,11 +91,8 @@ var nette = function () {
 	 * @return {bool}
 	 */
 	this.validateEvent = function (analyze, e) {
-		// thx to @vrana
-		var explicitNoAjax = e.button || e.ctrlKey || e.shiftKey || e.altKey || e.metaKey;
-
 		if (analyze.form) {
-			if (explicitNoAjax && analyze.isSubmit) {
+			if (analyze.explicitNoAjax && analyze.isSubmit) {
 				inner.explicitNoAjax = true;
 				return false;
 			} else if (analyze.isForm && inner.explicitNoAjax) {
@@ -101,7 +101,7 @@ var nette = function () {
 			}
 
 			if (analyze.form.get(0).onsubmit && !analyze.form.get(0).onsubmit()) return false;
-		} else if (explicitNoAjax) return false;
+		} else if (analyze.explicitNoAjax) return false;
 
 		// thx to @vrana
 		if (/:|^#/.test(analyze.form ? analyze.form.attr('action') : analyze.el.attr('href'))) return false;
