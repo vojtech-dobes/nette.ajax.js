@@ -59,9 +59,7 @@ var nette = function () {
 			form: null
 		};
 
-		if (analyze.isSubmit) {
-			analyze.form = analyze.el.closest('form');
-		} else if (analyze.isImage) {
+		if (analyze.isSubmit || analyze.isImage) {
 			analyze.form = analyze.el.closest('form');
 		} else if (analyze.isForm) {
 			analyze.form = analyze.el;
