@@ -53,8 +53,8 @@ Extension may implement all 7 events or just one. Available events are these:
 
 - `init` -  called just once
 - `load (ajaxHandler)` - may be called more times (called at the end of `init()` method automatically)
-- `before (ui)` - called before AJAX request is created
-- `start (req)` - called immediatelly after creation of request
+- `before (settings, ui)` - called before AJAX request is created
+- `start (jqXHR)` - called immediatelly after creation of request
 - `success (payload)` - called after successful request
 - `complete` - called after any request
 - `error` - called after failed request
@@ -89,13 +89,41 @@ Any manipulation with extensions is forbidden after the initialization. Please s
 
 ## Default extensions
 
+### Validation
+
+Performs various checks of event causing the request:
+
+- CTRL, ALT, SHIFT keys or middle mouse button will prevent ajaxification,
+- absolute URLs and hash links will prevent ajaxification,
+- also performs validation of submitted form.
+
+Validation for element can be disabled by HTML 5 data attribute `data-ajax-validate="false"`. You may also switch various parts of validation in `ajax()` method by providing `validate` key in options. For example:
+
+```js
+$('#link').click(function (e) {
+	$.nette.ajax({
+		validate: {
+			keys: false // CTRL, ALT etc. will not prevent ajaxification
+		}
+	}, this, e);
+});
+```
+
+### Forms
+
+Collects data from form elements including image button coordinates.
+
 ### Snippets
 
-Classic implementation from the original script.
+Ensures update of all invalidated snippets in DOM. Update routine can be altered by replacing any of 3 following methods:
+
+- `updateSnippet` calls other methods, handles IE issues with `<title>` snippet.
+- `getElement` implements default Nette implementation of snippets (name of snippet is its ID attribute).
+- `applySnippet` best place for adding some animations etc. Default implementation just calls `.html()`.
 
 ### Redirect
 
-Classic implementation from the original script also.
+If payload contains `redirect` key, JS will perform change of location.
 
 ### History
 
@@ -103,12 +131,18 @@ Takes care of saving the state to browser history if possible.
 
 ### Unique
 
-Ensures there is always just one request running.
+Ensures there is always just one request running. When one request begins, previous one will be aborted.
 
 ### Abort
 
-User can abort running request by pressing Escape.
+User can abort running request by pressing ESC.
 
 ### Init
 
-Special extension with default ajaxifying implementation. `init()` called with arguments will override it.
+Special extension with default ajaxifying implementation. `init()` called with arguments will override it. Default implementation provides following parameters:
+
+- `linkSelector` for ajaxifying links
+- `formSelector` for ajaxifying submitting of form and clicking on its submit buttons and image buttons
+- `buttonSelector` for ajaxifying specific buttons in non-ajax forms
+
+All ajaxified elements should be marked by CSS class `ajax`.
