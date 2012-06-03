@@ -97,6 +97,18 @@ Performs various checks of event causing the request:
 - absolute URLs and hash links will prevent ajaxification,
 - also performs validation of submitted form.
 
+Validation for element can be disabled by HTML 5 data attribute `data-ajax-validate="false"`. You may also switch various parts of validation in `ajax()` method by providing `validate` key in options. For example:
+
+```js
+$('#link').click(function (e) {
+	$.nette.ajax({
+		validate: {
+			keys: false // CTRL, ALT etc. will not prevent ajaxification
+		}
+	}, this, e);
+});
+```
+
 ### Forms
 
 Collects data from form elements including image button coordinates.

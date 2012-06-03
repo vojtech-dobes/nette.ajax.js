@@ -188,23 +188,43 @@ $.nette.ext('validation', {
 		if (!settings.nette || !e) return true;
 		else var analyze = settings.nette;
 
-		// thx to @vrana
-		var explicitNoAjax = e.button || e.ctrlKey || e.shiftKey || e.altKey || e.metaKey;
+		var validate = $.extend({
+			keys: true,
+			url: true,
+			form: true
+		}, settings.validate || (function () {
+			if (!analyze.el.is('[data-ajax-validate]')) return;
+			var attr = analyze.el.data('ajaxValidate');
+			if (attr === false) return {
+				keys: false,
+				url: false,
+				form: false
+			}; else if (typeof attr == 'object') return attr;
+ 		})() || {});
 
-		if (analyze.form) {
-			if (explicitNoAjax && analyze.isSubmit) {
-				this.explicitNoAjax = true;
-				return false;
-			} else if (analyze.isForm && this.explicitNoAjax) {
-				this.explicitNoAjax = false;
-				return false;
-			}
+		if (validate.keys) {
+			// thx to @vrana
+			var explicitNoAjax = e.button || e.ctrlKey || e.shiftKey || e.altKey || e.metaKey;
 
+			if (analyze.form) {
+				if (explicitNoAjax && analyze.isSubmit) {
+					this.explicitNoAjax = true;
+					return false;
+				} else if (analyze.isForm && this.explicitNoAjax) {
+					this.explicitNoAjax = false;
+					return false;
+				}
+			} else if (explicitNoAjax) return false;
+		}
+
+		if (validate.form && analyze.form) {
 			if (analyze.form.get(0).onsubmit && !analyze.form.get(0).onsubmit()) return false;
-		} else if (explicitNoAjax) return false;
+		}
 
-		// thx to @vrana
-		if (/:|^#/.test(analyze.form ? analyze.form.attr('action') : analyze.el.attr('href'))) return false;
+		if (validate.url) {
+			// thx to @vrana
+			if (/:|^#/.test(analyze.form ? analyze.form.attr('action') : analyze.el.attr('href'))) return false;
+		}
 
 		e.stopPropagation();
 		e.preventDefault();
