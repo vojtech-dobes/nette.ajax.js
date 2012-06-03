@@ -230,20 +230,25 @@ $.nette.ext('forms', {
 			settings.data[name + '.y'] = e.pageY - offset.top;
 		}
 
-		var values = analyze.form.serializeArray();
+		settings.data = this.serializeValues(analyze.form, settings.data);
+	}
+}, {
+	serializeValues: function ($form, data) {
+		var values = $form.serializeArray();
 		for (var i = 0; i < values.length; i++) {
 			var name = values[i].name;
-			if (name in settings.data) {
-				var val = settings.data[name];
+			if (name in data) {
+				var val = data[name];
 				if (!(val instanceof Array)) {
 					val = [val];
 				}
 				val.push(values[i].value);
-				settings.data[name] = val;
+				data[name] = val;
 			} else {
-				settings.data[name] = values[i].value;
+				data[name] = values[i].value;
 			}
 		}
+		return data;
 	}
 });
 
