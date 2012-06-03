@@ -223,7 +223,7 @@ $.nette.ext('validation', {
 
 		if (validate.url) {
 			// thx to @vrana
-			if (/:|^#/.test(analyze.form ? analyze.form.attr('action') : analyze.el.attr('href'))) return false;
+			if (/:|^#/.test(analyze.form ? settings.url : analyze.el.attr('href'))) return false;
 		}
 
 		e.stopPropagation();
