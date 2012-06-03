@@ -43,32 +43,6 @@ var nette = function () {
 	};
 
 	/**
-	 * Analyzes element for further checks
-	 *
-	 * @param  {Element}
-	 * @return {object}
-	 */
-	this.analyze = function (ui) {
-		var $el = $(ui);
-		var analyze = {
-			ui: ui,
-			el: $el,
-			isForm: $el.is('form'),
-			isSubmit: $el.is(':submit'),
-			isImage: $el.is(':image'),
-			form: null
-		};
-
-		if (analyze.isSubmit || analyze.isImage) {
-			analyze.form = analyze.el.closest('form');
-		} else if (analyze.isForm) {
-			analyze.form = analyze.el;
-		}
-
-		return analyze;
-	};
-
-	/**
 	 * Allows manipulation with extensions.
 	 * When called with 1. argument only, it returns extension with given name.
 	 * When called with 2. argument equal to false, it removes extension entirely.
@@ -167,7 +141,21 @@ var nette = function () {
 	 */
 	this.ajax = function (settings, ui, e) {
 		if (!settings.nette && ui && e) {
-			var analyze = settings.nette = this.analyze(ui);
+			var $el = $(ui);
+			var analyze = settings.nette = {
+				ui: ui,
+				el: $el,
+				isForm: $el.is('form'),
+				isSubmit: $el.is(':submit'),
+				isImage: $el.is(':image'),
+				form: null
+			};
+
+			if (analyze.isSubmit || analyze.isImage) {
+				analyze.form = analyze.el.closest('form');
+			} else if (analyze.isForm) {
+				analyze.form = analyze.el;
+			}
 
 			if (!settings.url) {
 				settings.url = analyze.form ? analyze.form.attr('action') : ui.href;
