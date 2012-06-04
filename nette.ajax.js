@@ -326,7 +326,7 @@ if (!!(window.history && history.pushState)) { // check borrowed from Modernizr
 			if (payload.url) {
 				this.href = payload.url;
 			}
-			if (!payload.signal && window.history && history.pushState && this.href) {
+			if (!payload.signal && this.href) {
 				history.pushState({href: this.href}, '', this.href);
 			}
 		}
