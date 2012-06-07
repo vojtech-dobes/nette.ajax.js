@@ -246,8 +246,14 @@ $.nette.ext('forms', {
 		} else if (analyze.isImage) {
 			var offset = analyze.el.offset();
 			var name = analyze.el.attr('name');
-			settings.data[name + '.x'] = e.pageX - offset.left;
-			settings.data[name + '.y'] = e.pageY - offset.top;
+			var dataOffset = [ Math.max(0, e.pageX - offset.left), Math.max(0, e.pageY - offset.top) ];
+
+			if (name.indexOf('[', 0) !== -1) { // inside a container
+				settings.data[name] = dataOffset;
+			} else {
+				settings.data[name + '.x'] = dataOffset[0];
+				settings.data[name + '.y'] = dataOffset[1];
+			}
 		}
 
 		settings.data = this.serializeValues(analyze.form, settings.data);
