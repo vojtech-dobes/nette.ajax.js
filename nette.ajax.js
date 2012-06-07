@@ -218,7 +218,11 @@ $.nette.ext('validation', {
 		}
 
 		if (validate.form && analyze.form) {
-			if (analyze.form.get(0).onsubmit && !analyze.form.get(0).onsubmit()) return false;
+			if (analyze.form.get(0).onsubmit && !analyze.form.get(0).onsubmit()) {
+				e.stopImmediatePropagation();
+				e.preventDefault();
+				return false;
+			}
 		}
 
 		if (validate.url) {
