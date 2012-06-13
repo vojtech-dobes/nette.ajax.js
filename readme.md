@@ -23,7 +23,7 @@ It works as a jQuery plugin. As well known `jquery.nette.js`, it installs itself
 
 You have to explicitly initialize plugin via method `init`. Plugin has predefined hooks for links and forms with `ajax` CSS class. It may be enough for you. If you want to change the behavior, you may:
 
-* Alter the selectors via setting `$.nette.ext('init').context.linkSelector` or `$.nette.ext('init').context.formSelector` to whatever you wish.
+* Alter the selectors via setting `$.nette.ext('init').linkSelector` or `$.nette.ext('init').formSelector` to whatever you wish.
 * Or you may redefine ajaxifying routine completely.
 
 Method `init()` accepts hash of event callbacks (if you provide just function instead, it will be considered callback for `load` event). `load` event callback is the right place, where you should ajaxify all elements you want. Callback will be called with with `handler` function as first argument:
@@ -73,19 +73,12 @@ success: function (payload, nette) {
 }
 ```
 
-Extension may be disabled by calling: `$.nette.ext('name', null);`. You can also modify it directly - just grab the instance of extension by calling `$.nette.ext('name');` without other arguments. Structure of extension:
-
-```js
-// event callbacks are in 'on' namespace
-$.nette.ext('snippets').on.complete
-```
+Extension may be disabled by calling: `$.nette.ext('name', null);`. You can also modify it directly - just grab the instance of extension by calling `$.nette.ext('name');` without other arguments. Returned object is instance of context:
 
 ```js
 // context of extension
-$.nette.ext('unique').context
+$.nette.ext('unique');
 ```
-
-Any manipulation with extensions is forbidden after the initialization. Please setup everything before `init()` call.
 
 ## Default extensions
 
