@@ -16,7 +16,6 @@ var nette = function () {
 		self: this,
 		initialized: false,
 		contexts: {},
-		extensions: {},
 		on: {
 			init: {},
 			load: {},
@@ -32,6 +31,7 @@ var nette = function () {
 			var name = args.shift();
 			args.push(inner.self);
 			$.each(inner.on[name], function (index, reaction) {
+				if (reaction === undefined) return true;
 				var temp = reaction.apply(inner.contexts[index], args);
 				return result = (temp === undefined || temp);
 			});
@@ -54,20 +54,29 @@ var nette = function () {
 	 * @return {$.nette|object} Provides a fluent interface OR returns extensions with given name
 	 */
 	this.ext = function (name, callbacks, context) {
-		if (inner.initialized) throw 'Cannot manipulate nette-ajax extensions after initialization.';
-
 		if (callbacks === undefined) {
-			return inner.extensions[name];
+			return inner.contexts[name];
 		} else if (!callbacks) {
-			inner.extensions[name] = undefined;
-		} else if (inner.extensions[name]) {
+			$.each(['init', 'load', 'before', 'start', 'success', 'complete', 'error'], function (index, event) {
+				inner.on[event][name] = undefined;
+			});
+			inner.contexts[name] = undefined;
+		} else if (inner.contexts[name] !== undefined) {
 			throw 'Cannot override already registered nette-ajax extension.';
 		} else {
-			inner.extensions[name] = {
-				name: name,
-				on: callbacks,
-				context: context
-			};
+			$.each(callbacks, function (event, callback) {
+				inner.on[event][name] = callback;
+			});
+			inner.contexts[name] = $.extend(context ? context : {}, {
+				name: function () {
+					return name;
+				},
+				ext: function (name) {
+					var ext = inner.contexts[name];
+					if (!ext) throw "Extension '" + this.name() + "' depends on disabled extension '" + name + "'.";
+					return ext;
+				}
+			});
 		}
 		return this;
 	};
@@ -98,23 +107,6 @@ var nette = function () {
 		}
 
 		inner.initialized = true;
-
-		$.each(inner.extensions, function (index, extension) {
-			$.each(['init', 'load', 'before', 'start', 'success', 'complete', 'error'], function (index, reaction) {
-				if (extension !== undefined) {
-					if (extension.on[reaction] !== undefined) {
-						inner.on[reaction][extension.name] = extension.on[reaction];
-					}
-					inner.contexts[extension.name] = $.extend(extension.context ? extension.context : {}, {
-						ext: function (name) {
-							var ext = inner.contexts[name];
-							if (!ext) throw "Extension '" + extension.name + "' depends on disabled extension '" + name + "'.";
-							return ext;
-						}
-					});
-				}
-			});
-		});
 
 		inner.fire('init');
 		this.load();
