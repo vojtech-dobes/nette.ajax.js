@@ -12,7 +12,7 @@ $.nette.ext('diagnostics.dumps', {
 
 		$.each(payload.netteDumps, function (i, item) {
 			if (item.title) $('<h2>', {
-				text: title
+				text: item.title
 			}).appendTo($helper);
 			var $table = $('<table>').appendTo($helper), i = 0;
 			$.each(item.dump, function (key, dump) {
