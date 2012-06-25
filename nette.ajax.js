@@ -209,7 +209,7 @@ $.nette.ext('validation', {
 			} else if (explicitNoAjax) return false;
 		}
 
-		if (validate.form && analyze.form) {
+		if (validate.form && analyze.form && !((analyze.isSubmit || analyze.isImage) && analyze.el.attr('formnovalidate'))) {
 			if (analyze.form.get(0).onsubmit && !analyze.form.get(0).onsubmit()) {
 				e.stopImmediatePropagation();
 				e.preventDefault();
