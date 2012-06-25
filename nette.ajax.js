@@ -318,7 +318,7 @@ $.nette.ext('redirect', {
 // change URL (requires HTML5)
 if (!!(window.history && history.pushState)) { // check borrowed from Modernizr
 	$.nette.ext('history', {
-		before: function (settings, ui) {
+		before: function (ui) {
 			var $el = $(ui);
 			if ($el.is('a')) {
 				this.href = ui.href;
