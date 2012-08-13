@@ -82,10 +82,10 @@ var nette = function () {
 	};
 
 	/**
-	 * Initializes the plugin. Forbids any further modifications of extensions.
-	 * Fires 'init' event, then 'load' event.
-	 * When called with any arguments, it will overried default 'init' extension
-	 * with provided callbacks.
+	 * Initializes the plugin:
+	 * - fires 'init' event, then 'load' event
+	 * - when called with any arguments, it will override default 'init' extension
+	 *   with provided callbacks
 	 *
 	 * @param  {function|object|null} Callback for 'load' event or entire set of callbacks for any events
 	 * @param  {object|null} Context provided for callbacks in first argument
