@@ -398,7 +398,7 @@ $.nette.ext('init', {
 }, {
 	linkSelector: 'a.ajax',
 	formSelector: 'form.ajax',
-	buttonSelector: 'input.ajax:submit, input.ajax:image'
+	buttonSelector: 'input.ajax[type="submit"], input.ajax[type="image"]'
 });
 
 })(jQuery);
