@@ -231,6 +231,16 @@ $.nette.ext('validation', {
 });
 
 $.nette.ext('forms', {
+	success: function (payload) {
+		var snippets;
+		if (!window.Nette || !payload.snippets || !(snippets = this.ext('snippets'))) return;
+
+		for (var id in payload.snippets) {
+			snippets.getElement(id).find('form').each(function() {
+				window.Nette.initForm(this);
+			});
+		}
+	},
 	before: function (settings, ui, e) {
 		var analyze = settings.nette;
 		if (!analyze || !analyze.form) return;
