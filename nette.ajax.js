@@ -357,7 +357,7 @@ $.nette.ext('state', {
 // abort last request if new started
 $.nette.ext('unique', {
 	start: function (xhr) {
-		if (this.req) {
+		if (this.xhr) {
 			this.xhr.abort();
 		}
 		this.xhr = xhr;
