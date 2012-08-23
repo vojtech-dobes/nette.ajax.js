@@ -9,7 +9,9 @@
 
 (function($, undefined) {
 
-if (typeof $ != 'function') return;
+if (typeof $ != 'function') {
+	return console.error('nette.ajax.js: jQuery is missing, load it please');
+}
 
 var nette = function () {
 	var inner = {
@@ -423,4 +425,4 @@ $.nette.ext('init', {
 	buttonSelector: 'input.ajax[type="submit"], input.ajax[type="image"]'
 });
 
-})(jQuery);
+})(window.jQuery);
