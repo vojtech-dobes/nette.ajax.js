@@ -59,9 +59,9 @@ var nette = function () {
 				name: function () {
 					return name;
 				},
-				ext: function (name) {
+				ext: function (name, force) {
 					var ext = inner.contexts[name];
-					if (!ext) throw "Extension '" + this.name() + "' depends on disabled extension '" + name + "'.";
+					if (!ext && force) throw "Extension '" + this.name() + "' depends on disabled extension '" + name + "'.";
 					return ext;
 				}
 			});

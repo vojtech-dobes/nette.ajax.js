@@ -5,7 +5,7 @@
  */
 $.nette.ext('scrollTo', {
 	success: function (payload) {
-		var snippetsExtension = this.ext('snippets');
+		var snippetsExtension = this.ext('snippets', true);
 		if (payload.snippets) {
 			for (var id in payload.snippets) {
 				var $el = snippetsExtension.getElement(id);
