@@ -211,6 +211,10 @@ var nette = function () {
 
 $.nette = new ($.extend(nette, $.nette ? $.nette : {}));
 
+$.fn.netteAjax = function (e, options) {
+	return $.nette.ajax(options || {}, this[0], e);
+};
+
 $.nette.ext('validation', {
 	before: function (settings, ui, e) {
 		if (!settings.nette || !e) return true;
