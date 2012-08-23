@@ -30,10 +30,12 @@ var nette = function () {
 		fire: function () {
 			var result = true;
 			var args = Array.prototype.slice.call(arguments);
-			var name = args.shift();
+			var props = args.shift();
+			var name = (typeof props == 'string') ? props : props.name;
+			var off = (typeof props == 'object') ? props.off || {} : {};
 			args.push(inner.self);
 			$.each(inner.on[name], function (index, reaction) {
-				if (reaction === undefined) return true;
+				if (reaction === undefined || $.inArray(index, off) !== -1) return true;
 				var temp = reaction.apply(inner.contexts[index], args);
 				return result = (temp === undefined || temp);
 			});
@@ -169,20 +171,40 @@ var nette = function () {
 			if (!settings.type) {
 				settings.type = analyze.form ? analyze.form.attr('method') : 'get';
 			}
+
+			if ($el.is('[data-ajax-off]')) {
+				settings.off = $el.data('ajaxOff');
+				if (typeof settings.off == 'string') setting.off = [settings.off];
+			}
 		}
 
-		if (!inner.fire('before', settings, ui, e)) return;
+		if (!inner.fire({
+			name: 'before',
+			off: settings.off || {}
+		}, settings, ui, e)) return;
 
 		return $.ajax($.extend({
 			beforeSend: function (xhr) {
-				return inner.fire('start', xhr);
+				return inner.fire({
+					name: 'start',
+					off: settings.off || {}
+				}, xhr);
 			}
 		}, settings)).done(function (payload) {
-			inner.fire('success', payload);
+			inner.fire({
+				name: 'success',
+				off: settings.off || {}
+			}, payload);
 		}).fail(function (xhr, status, error) {
-			inner.fire('error', xhr, status, error);
+			inner.fire({
+				name :'error',
+				off: settings.off || {}
+			}, xhr, status, error);
 		}).always(function () {
-			inner.fire('complete');
+			inner.fire({
+				name: 'complete',
+				off: settings.off || {}
+			});
 		});
 	};
 };
