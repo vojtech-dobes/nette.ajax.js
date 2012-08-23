@@ -39,6 +39,28 @@ var nette = function () {
 		},
 		requestHandler: function (e) {
 			if (!inner.self.ajax({}, this, e)) return;
+		},
+		ext: function (callbacks, context, name) {
+			while (!name) {
+				name = 'ext_' + Math.random();
+				if (inner.context[name]) {
+					name = undefined;
+				}
+			}
+
+			$.each(callbacks, function (event, callback) {
+				inner.on[event][name] = callback;
+			});
+			inner.contexts[name] = $.extend(context ? context : {}, {
+				name: function () {
+					return name;
+				},
+				ext: function (name) {
+					var ext = inner.contexts[name];
+					if (!ext) throw "Extension '" + this.name() + "' depends on disabled extension '" + name + "'.";
+					return ext;
+				}
+			});
 		}
 	};
 
@@ -61,22 +83,12 @@ var nette = function () {
 				inner.on[event][name] = undefined;
 			});
 			inner.contexts[name] = undefined;
-		} else if (inner.contexts[name] !== undefined) {
+		} else if (typeof name == 'string' && inner.contexts[name] !== undefined) {
 			throw 'Cannot override already registered nette-ajax extension.';
+		} else if (typeof name == 'object') {
+			inner.ext(name, callbacks);
 		} else {
-			$.each(callbacks, function (event, callback) {
-				inner.on[event][name] = callback;
-			});
-			inner.contexts[name] = $.extend(context ? context : {}, {
-				name: function () {
-					return name;
-				},
-				ext: function (name) {
-					var ext = inner.contexts[name];
-					if (!ext) throw "Extension '" + this.name() + "' depends on disabled extension '" + name + "'.";
-					return ext;
-				}
-			});
+			inner.ext(callbacks, context, name);
 		}
 		return this;
 	};
