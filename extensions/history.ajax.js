@@ -16,7 +16,7 @@ $.nette.ext('history', {
 		if (payload.redirect) {
 			this.href = payload.redirect;
 		}
-		if (this.href) {
+		if (this.href && this.href != window.location.href) {
 			history.pushState({href: this.href}, '', this.href);
 		}
 	}
