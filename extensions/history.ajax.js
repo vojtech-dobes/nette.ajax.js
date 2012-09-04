@@ -7,9 +7,11 @@ $.nette.ext('redirect', false);
 
 $.nette.ext('history', {
 	before: function (settings, ui) {
-		var $el = $(ui);
-		if ($el.is('a')) {
-			this.href = ui.href;
+		if (!settings.nette) return;
+		if (!settings.nette.form) {
+			this.href = settings.nette.ui.href;
+		} else if (settings.nette.form.method == 'get') {
+			this.href = settings.nette.ui.action;
 		}
 	},
 	success: function (payload) {
