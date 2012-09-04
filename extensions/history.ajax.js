@@ -3,6 +3,8 @@
 // change URL (requires HTML5)
 if (!(window.history && history.pushState)) return; // check borrowed from Modernizr
 
+$.nette.ext('redirect', false);
+
 $.nette.ext('history', {
 	before: function (settings, ui) {
 		var $el = $(ui);
@@ -11,10 +13,10 @@ $.nette.ext('history', {
 		}
 	},
 	success: function (payload) {
-		if (payload.url) {
-			this.href = payload.url;
+		if (payload.redirect) {
+			this.href = payload.redirect;
 		}
-		if (!payload.signal && this.href) {
+		if (this.href) {
 			history.pushState({href: this.href}, '', this.href);
 		}
 	}
