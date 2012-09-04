@@ -302,25 +302,7 @@ $.nette.ext('forms', {
 			}
 		}
 
-		settings.data = this.serializeValues(analyze.form, settings.data);
-	}
-}, {
-	serializeValues: function ($form, data) {
-		var values = $form.serializeArray();
-		for (var i = 0; i < values.length; i++) {
-			var name = values[i].name;
-			if (name in data) {
-				var val = data[name];
-				if (!(val instanceof Array)) {
-					val = [val];
-				}
-				val.push(values[i].value);
-				data[name] = val;
-			} else {
-				data[name] = values[i].value;
-			}
-		}
-		return data;
+		settings.data = analyze.form.serialize() + '&' + $.param(settings.data);
 	}
 });
 
