@@ -367,27 +367,6 @@ $.nette.ext('redirect', {
 	}
 });
 
-// change URL (requires HTML5)
-if (!!(window.history && history.pushState)) { // check borrowed from Modernizr
-	$.nette.ext('history', {
-		start: function (xhr, settings) {
-			if (!settings.nette) return;
-			var $el = settings.nette.el;
-			if ($el.is('a')) {
-				this.href = settings.nette.ui.href;
-			}
-		},
-		success: function (payload) {
-			if (payload.url) {
-				this.href = payload.url;
-			}
-			if (!payload.signal && this.href) {
-				history.pushState({href: this.href}, '', this.href);
-			}
-		}
-	}, {href: null});
-}
-
 // current page state
 $.nette.ext('state', {
 	success: function (payload) {
