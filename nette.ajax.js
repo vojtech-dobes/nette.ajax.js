@@ -408,6 +408,20 @@ $.nette.ext('abort', {
 	}
 }, {xhr: null});
 
+$.nette.ext('crsf-protection', {
+	init: function () {
+		this.token = $('body').data('netteToken') || null;
+	},
+	start: function (xhr, settings) {
+		if (this.token) {
+			xhr.setRequestHeader('X-Nette-CSRF', this.token);
+		}
+	},
+	success: function (payload) {
+		this.token = payload.crsf_token || null;
+	}
+}, {token: null});
+
 // default ajaxification (can be overridden in init())
 $.nette.ext('init', {
 	load: function (rh) {
