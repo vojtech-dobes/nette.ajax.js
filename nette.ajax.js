@@ -149,7 +149,7 @@ var nette = function () {
 	 */
 	this.ajax = function (settings, ui, e) {
 		if (!settings.nette && ui && e) {
-			var $el = $(ui);
+			var $el = $(ui), xhr;
 			var analyze = settings.nette = {
 				ui: ui,
 				el: $el,
@@ -183,29 +183,33 @@ var nette = function () {
 			off: settings.off || {}
 		}, settings, ui, e)) return;
 
-		return $.ajax($.extend({
+		xhr = $.ajax($.extend({
 			beforeSend: function (xhr) {
 				return inner.fire({
 					name: 'start',
 					off: settings.off || {}
 				}, xhr);
 			}
-		}, settings)).done(function (payload) {
-			inner.fire({
-				name: 'success',
-				off: settings.off || {}
-			}, payload);
-		}).fail(function (xhr, status, error) {
-			inner.fire({
-				name :'error',
-				off: settings.off || {}
-			}, xhr, status, error);
-		}).always(function () {
-			inner.fire({
-				name: 'complete',
-				off: settings.off || {}
+		}, settings));
+		if (xhr) {
+			xhr.done(function (payload) {
+				inner.fire({
+					name: 'success',
+					off: settings.off || {}
+				}, payload);
+			}).fail(function (xhr, status, error) {
+				inner.fire({
+					name :'error',
+					off: settings.off || {}
+				}, xhr, status, error);
+			}).always(function () {
+				inner.fire({
+					name: 'complete',
+					off: settings.off || {}
+				});
 			});
-		});
+		}
+		return xhr;
 	};
 };
 
