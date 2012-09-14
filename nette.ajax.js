@@ -188,7 +188,7 @@ var nette = function () {
 				return inner.fire({
 					name: 'start',
 					off: settings.off || {}
-				}, xhr);
+				}, xhr, settings);
 			}
 		}, settings));
 		if (xhr) {
