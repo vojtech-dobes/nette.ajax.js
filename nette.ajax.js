@@ -47,7 +47,7 @@ var nette = function () {
 		ext: function (callbacks, context, name) {
 			while (!name) {
 				name = 'ext_' + Math.random();
-				if (inner.context[name]) {
+				if (inner.contexts[name]) {
 					name = undefined;
 				}
 			}
@@ -80,7 +80,9 @@ var nette = function () {
 	 * @return {$.nette|object} Provides a fluent interface OR returns extensions with given name
 	 */
 	this.ext = function (name, callbacks, context) {
-		if (callbacks === undefined) {
+		if (typeof name == 'object') {
+			inner.ext(name, callbacks);
+		} else if (callbacks === undefined) {
 			return inner.contexts[name];
 		} else if (!callbacks) {
 			$.each(['init', 'load', 'before', 'start', 'success', 'complete', 'error'], function (index, event) {
@@ -89,8 +91,6 @@ var nette = function () {
 			inner.contexts[name] = undefined;
 		} else if (typeof name == 'string' && inner.contexts[name] !== undefined) {
 			throw 'Cannot override already registered nette-ajax extension.';
-		} else if (typeof name == 'object') {
-			inner.ext(name, callbacks);
 		} else {
 			inner.ext(callbacks, context, name);
 		}
