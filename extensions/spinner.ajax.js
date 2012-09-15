@@ -5,7 +5,7 @@ $.nette.ext('spinner', {
 		this.spinner = this.createSpinner();
 		this.spinner.appendTo('body');
 	},
-	before: function () {
+	start: function () {
 		this.spinner.show(this.speed);
 	},
 	complete: function () {

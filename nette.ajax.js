@@ -151,6 +151,7 @@ var nette = function () {
 		if (!settings.nette && ui && e) {
 			var $el = $(ui), xhr;
 			var analyze = settings.nette = {
+				e: e,
 				ui: ui,
 				el: $el,
 				isForm: $el.is('form'),
@@ -178,20 +179,20 @@ var nette = function () {
 			}
 		}
 
-		if (!inner.fire({
-			name: 'before',
-			off: settings.off || {}
-		}, settings, ui, e)) return;
-
 		xhr = $.ajax($.extend({
 			beforeSend: function (xhr) {
 				return inner.fire({
-					name: 'start',
+					name: 'before',
 					off: settings.off || {}
 				}, xhr, settings);
 			}
 		}, settings));
+
 		if (xhr) {
+			inner.fire({
+				name: 'start',
+				off: settings.off || {}
+			}, xhr, settings);
 			xhr.done(function (payload) {
 				inner.fire({
 					name: 'success',
@@ -220,9 +221,10 @@ $.fn.netteAjax = function (e, options) {
 };
 
 $.nette.ext('validation', {
-	before: function (settings, ui, e) {
-		if (!settings.nette || !e) return true;
+	before: function (xhr, settings) {
+		if (!settings.nette) return true;
 		else var analyze = settings.nette;
+		var e = analyze.e;
 
 		var validate = $.extend({
 			keys: true,
@@ -285,9 +287,10 @@ $.nette.ext('forms', {
 			});
 		}
 	},
-	before: function (settings, ui, e) {
+	before: function (xhr, settings) {
 		var analyze = settings.nette;
 		if (!analyze || !analyze.form) return;
+		var e = analyze.e;
 
 		settings.data = settings.data || {};
 
