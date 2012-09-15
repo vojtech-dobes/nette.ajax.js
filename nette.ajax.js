@@ -151,6 +151,7 @@ var nette = function () {
 		if (!settings.nette && ui && e) {
 			var $el = $(ui), xhr;
 			var analyze = settings.nette = {
+				e: e,
 				ui: ui,
 				el: $el,
 				isForm: $el.is('form'),
@@ -178,19 +179,15 @@ var nette = function () {
 			}
 		}
 
-		if (!inner.fire({
-			name: 'before',
-			off: settings.off || {}
-		}, settings, ui, e)) return;
-
-		xhr = $.ajax($.extend({
-			beforeSend: function (xhr) {
+		xhr = $.ajax($.extend{
+			beforeSend: function (xhr, settings) {
 				return inner.fire({
-					name: 'start',
+					name: 'before',
 					off: settings.off || {}
 				}, xhr, settings);
 			}
 		}, settings));
+
 		if (xhr) {
 			xhr.done(function (payload) {
 				inner.fire({
@@ -208,6 +205,10 @@ var nette = function () {
 					off: settings.off || {}
 				});
 			});
+			inner.fire({
+				name: 'start',
+				off: settings.off || {}
+			}, xhr, settings);
 		}
 		return xhr;
 	};
@@ -220,9 +221,10 @@ $.fn.netteAjax = function (e, options) {
 };
 
 $.nette.ext('validation', {
-	before: function (settings, ui, e) {
-		if (!settings.nette || !e) return true;
+	before: function (xhr, settings) {
+		if (!settings.nette) return true;
 		else var analyze = settings.nette;
+		var e = analyze.e;
 
 		var validate = $.extend({
 			keys: true,
@@ -285,9 +287,10 @@ $.nette.ext('forms', {
 			});
 		}
 	},
-	before: function (settings, ui, e) {
+	before: function (xhr, settings) {
 		var analyze = settings.nette;
 		if (!analyze || !analyze.form) return;
+		var e = analyze.e;
 
 		settings.data = settings.data || {};
 
@@ -354,10 +357,11 @@ $.nette.ext('redirect', {
 // change URL (requires HTML5)
 if (!!(window.history && history.pushState)) { // check borrowed from Modernizr
 	$.nette.ext('history', {
-		before: function (settings, ui) {
-			var $el = $(ui);
+		start: function (xhr, settings) {
+			if (!settings.nette) return;
+			var $el = settings.nette.el;
 			if ($el.is('a')) {
-				this.href = ui.href;
+				this.href = settings.nette.ui.href;
 			}
 		},
 		success: function (payload) {
