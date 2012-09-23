@@ -1,0 +1,11 @@
+/* example css */
+#ajax-spinner{
+    background: #14262C url('ajax-spinner.gif') no-repeat center center;
+    position: fixed;
+    opacity: 0.5;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+    z-index: 9999;
+}
