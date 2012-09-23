@@ -23,6 +23,7 @@ var nette = function () {
 			load: {},
 			before: {},
 			start: {},
+			after: {},
 			success: {},
 			complete: {},
 			error: {}
@@ -209,6 +210,10 @@ var nette = function () {
 					off: settings.off || {}
 				});
 			});
+			inner.fire({
+				name: 'after',
+				off: settings.off || {}
+			}, xhr, settings);
 		}
 		return xhr;
 	};
