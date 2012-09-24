@@ -21,7 +21,7 @@ $.nette.ext('spinner', {
 		});
 	},
 	spinner: null,
-    delay: 400
+	delay: 400
 });
 
 })(jQuery);
