@@ -180,14 +180,12 @@ var nette = function () {
 			}
 		}
 
-		xhr = $.ajax($.extend({
-			beforeSend: function (xhr) {
-				return inner.fire({
-					name: 'before',
-					off: settings.off || {}
-				}, xhr, settings);
-			}
-		}, settings));
+		inner.fire({
+			name: 'before',
+			off: settings.off || {}
+		}, settings);
+
+		xhr = $.ajax(settings);
 
 		if (xhr) {
 			inner.fire({
@@ -226,7 +224,7 @@ $.fn.netteAjax = function (e, options) {
 };
 
 $.nette.ext('validation', {
-	before: function (xhr, settings) {
+	before: function (settings) {
 		if (!settings.nette) return true;
 		else var analyze = settings.nette;
 		var e = analyze.e;
@@ -292,7 +290,7 @@ $.nette.ext('forms', {
 			});
 		}
 	},
-	before: function (xhr, settings) {
+	before: function (settings) {
 		var analyze = settings.nette;
 		if (!analyze || !analyze.form) return;
 		var e = analyze.e;
