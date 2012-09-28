@@ -296,25 +296,33 @@ $.nette.ext('forms', {
 		var analyze = settings.nette;
 		if (!analyze || !analyze.form) return;
 		var e = analyze.e;
-
-		settings.data = settings.data || {};
+		var originalData = settings.data || {};
+		var formData = {};
 
 		if (analyze.isSubmit) {
-			settings.data[analyze.el.attr('name')] = analyze.el.val() || '';
+			formData[analyze.el.attr('name')] = analyze.el.val() || '';
 		} else if (analyze.isImage) {
 			var offset = analyze.el.offset();
 			var name = analyze.el.attr('name');
 			var dataOffset = [ Math.max(0, e.pageX - offset.left), Math.max(0, e.pageY - offset.top) ];
 
 			if (name.indexOf('[', 0) !== -1) { // inside a container
-				settings.data[name] = dataOffset;
+				formData[name] = dataOffset;
 			} else {
-				settings.data[name + '.x'] = dataOffset[0];
-				settings.data[name + '.y'] = dataOffset[1];
+				formData[name + '.x'] = dataOffset[0];
+				formData[name + '.y'] = dataOffset[1];
 			}
 		}
 
-		settings.data = analyze.form.serialize() + '&' + $.param(settings.data);
+		if (typeof originalData != 'string') {
+			originalData = $.param(originalData);
+		}
+		formData = $.param(formData);
+		settings.data = analyze.form.serialize() + (formData ? '&' + formData : '') + '&' + originalData;
+
+		if (settings.contentType !== false) {
+			xhr.setRequestHeader('Content-Type', settings.contentType);
+		}
 	}
 });
 
