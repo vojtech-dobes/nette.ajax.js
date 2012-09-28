@@ -149,7 +149,7 @@ var nette = function () {
 	 */
 	this.ajax = function (settings, ui, e) {
 		if (!settings.nette && ui && e) {
-			var $el = $(ui), xhr;
+			var $el = $(ui), xhr, originalBeforeSend;
 			var analyze = settings.nette = {
 				e: e,
 				ui: ui,
@@ -179,14 +179,19 @@ var nette = function () {
 			}
 		}
 
-		xhr = $.ajax($.extend{
-			beforeSend: function (xhr, settings) {
-				return inner.fire({
-					name: 'before',
-					off: settings.off || {}
-				}, xhr, settings);
+		originalBeforeSend = settings.beforeSend;
+		settings.beforeSend = function (xhr, settings) {
+			if (originalBeforeSend) {
+				var result = originalBeforeSend(xhr, settings);
+				if (result !== undefined && !result) return result;
 			}
-		}, settings));
+			return inner.fire({
+				name: 'before',
+				off: settings.off || {}
+			}, xhr, settings);
+		};
+
+		xhr = $.ajax(settings);
 
 		if (xhr) {
 			xhr.done(function (payload) {
