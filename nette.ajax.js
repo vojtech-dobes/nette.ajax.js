@@ -175,7 +175,7 @@ var nette = function () {
 
 			if ($el.is('[data-ajax-off]')) {
 				settings.off = $el.data('ajaxOff');
-				if (typeof settings.off == 'string') setting.off = [settings.off];
+				if (typeof settings.off == 'string') settings.off = [settings.off];
 			}
 		}
 
