@@ -245,6 +245,12 @@ $.nette.ext('validation', {
 			}; else if (typeof attr == 'object') return attr;
  		})() || {});
 
+		var passEvent = false;
+		if (analyze.el.attr('data-ajax-pass') !== undefined) {
+			passEvent = analyze.el.data('ajaxPass');
+			passEvent = typeof passEvent == 'bool' ? passEvent : true;
+		}
+
 		if (validate.keys) {
 			// thx to @vrana
 			var explicitNoAjax = e.button || e.ctrlKey || e.shiftKey || e.altKey || e.metaKey;
@@ -273,8 +279,10 @@ $.nette.ext('validation', {
 			if (/:|^#/.test(analyze.form ? settings.url : analyze.el.attr('href'))) return false;
 		}
 
-		e.stopPropagation();
-		e.preventDefault();
+		if (!passEvent) {
+			e.stopPropagation();
+			e.preventDefault();
+		}
 		return true;
 	}
 }, {
