@@ -1,7 +1,7 @@
 (function($, undefined) {
 
-// change URL (requires HTML5)
-if (!(window.history && history.pushState)) return; // check borrowed from Modernizr
+// Is History API reliably supported? (based on Modernizr & PJAX)
+if (!(window.history && history.pushState && window.history.replaceState && !navigator.userAgent.match(/((iPod|iPhone|iPad).+\bOS\s+[1-4]|WebApps\/.+CFNetwork)/))) return;
 
 $.nette.ext('redirect', false);
 
