@@ -68,8 +68,9 @@ $.nette.ext('history', {
 		}
 	},
 	success: function (payload) {
-		if (payload.redirect) {
-			this.href = payload.redirect;
+		var redirect = payload.redirect || payload.url; // backwards compatibility for 'url'
+		if (redirect) {
+			this.href = redirect;
 		}
 		if (this.href && this.href != window.location.href) {
 			history.pushState({
