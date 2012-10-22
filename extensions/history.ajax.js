@@ -35,12 +35,12 @@ $.nette.ext('history', {
 			};
 		}
 
-		this.initialState = {
+		history.replaceState(this.initialState = {
 			nette: true,
 			href: window.location.href,
 			title: document.title,
 			ui: findSnippets()
-		};
+		}, document.title, window.location.href);
 
 		$(window).on('popstate.nette', $.proxy(function (e) {
 			var state = e.originalEvent.state || this.initialState;
