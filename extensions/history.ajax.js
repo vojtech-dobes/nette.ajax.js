@@ -70,7 +70,12 @@ $.nette.ext('history', {
 	success: function (payload) {
 		var redirect = payload.redirect || payload.url; // backwards compatibility for 'url'
 		if (redirect) {
-			this.href = redirect;
+			var regexp = new RegExp('//' + window.location.host + '($|/)');
+			if ((redirect.substring(0,4) === 'http') ? regexp.test(redirect) : true) {
+				this.href = redirect;
+			} else {
+				window.location.href = redirect;
+			}
 		}
 		if (this.href && this.href != window.location.href) {
 			history.pushState({
