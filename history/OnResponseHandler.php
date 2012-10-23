@@ -12,6 +12,7 @@ use Nette\Reflection\Property;
 /**
  * Automatically adds 'redirect' to payload when forward happens
  * to simplify userland code in presenters
+ * Also bypasses 'redirect()' calls with 'forward()' calls
  *
  * @author Vojtěch Dobeš
  */

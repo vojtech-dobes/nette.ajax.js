@@ -2,140 +2,174 @@
 
 Flexible utility script for AJAX. Supports snippets, redirects etc.
 
-## License
+#### License
 
 MIT
 
-## Dependencies
+#### Dependencies
 
-- jQuery 1.7
+jQuery 1.7
 
 ## Installation
 
 1. Get the source code from Github.
-2. Move `nette.ajax.js` to your directory with Javascript files.
-3. Link the file in your templates.
-4. Put somewhere the initialization routine. See `example.js` for inspiration.
-
-## Usage
-
-It works as a jQuery plugin. As well known `jquery.nette.js`, it installs itself into `$.nette`. But similarities end here.
-
-You have to explicitly initialize plugin via method `init`. Plugin has predefined hooks for links and forms with `ajax` CSS class. It may be enough for you. If you want to change the behavior, you may:
-
-* Alter the selectors via setting `$.nette.ext('init').linkSelector` or `$.nette.ext('init').formSelector` to whatever you wish.
-* Or you may redefine ajaxifying routine completely.
-
-Method `init()` accepts hash of event callbacks (if you provide just function instead, it will be considered callback for `load` event). `load` event callback is the right place, where you should ajaxify all elements you want. Callback will be called with with `handler` function as first argument:
+2. Copy `nette.ajax.js` to your directory with Javascript files.
+3. Link the file in your templates (usually in `app/@layout.latte`, after jQuery!).
+4. Put somewhere the initialization routine:
 
 ```js
-$.nette.init(function (handler) {
-	$('a.ajax').click(handler);
+$(function () {
+	$.nette.init();
 });
 ```
 
-That way or another, you're ready to go.
+## Usage
+
+By defaults all links and forms with CSS class `ajax` will be instantly ajaxified. Behavior can be altered in configuration of `init` extension. Object returned by call `var init = $.nette.ext('init');` has these props:
+
+<table>
+	<tr>
+		<th>name</th>
+		<th>default value</th>
+		<th>description</th>
+	</tr>
+	<tr>
+		<td><code>linkSelector</code></td>
+		<td><code>a.ajax</code></td>
+		<td>CSS selector for links</td>
+	</tr>
+	<tr>
+		<td><code>formSelector</code></td>
+		<td><code>form.ajax</code></td>
+		<td>CSS selector for forms</td>
+	</tr>
+	<tr>
+		<td><code>buttonSelector</code></td>
+		<td><code>input.ajax[type="submit"], input.ajax[type="image"]</code></td>
+		<td>CSS selector for form elements responsible for submit</td>
+	</tr>
+</table>
+
+Ajaxification is bound to `click` (`submit`) event in `nette` namespace. Ajaxification of specific link can be canceled with code like this (while other callbacks will remain):
+
+```js
+$('a.no-ajax').off('click.nette');
+```
+
+If this implementation doesn't suffice you, it can be overriden with custom solution, e.g.:
+
+```js
+$.nette.init(function (ajaxHandler) {
+	$('a.ajax:not(.no-ajax)').live('click', ajaxHandler);
+});
+```
 
 ## Extensions
 
-Almost every functionality is implemented via set of 7 available events under the hood. You may hook them via concept of extensions. Every extension consists of 3 elements: name, set of event callbacks and some default context for storing values etc.
+Ajaxification envelopes standard `$.ajax()` call and extends it with several events, that can be hooked with custom callbacks. Set of associated callbacks is called **extension**. Snippets processing, ability to cancel running request by *Escape*... all this functionality is implemented in form of extensions. Registration of extension looks like this:
 
 ```js
 $.nette.ext('name', {
-	nameOfEvent: function () { ... },
-	...
-}, {foo: bar});
+    event1: function () {
+    },
+    event2: ...
+}, {
+    // ... shared context (this) of all callbacks
+});
 ```
 
-Context is shared in every event callbacks and accessible via `this`.
+First argument is name. It's optional.
 
-Extension may implement all 7 events or just one. Available events are these:
+Second argument should be hash of callbacks with keys corresponding to names of events. These events are available:
 
-- `init` -  called just once
-- `load (ajaxHandler)` - may be called more times (called at the end of `init()` method automatically)
-- `before (settings, ui, e)` - called before AJAX request is created
-- `start (jqXHR)` - called immediatelly after creation of request
-- `success (payload)` - called after successful request
-- `complete` - called after any request
-- `error` - called after failed request
+<table>
+	<tr>
+		<th>name</th>
+		<th>arguments</th>
+		<th>description</th>
+	</tr>
+	<tr>
+		<td><code>init</code></td>
+		<td></td>
+		<td>Called just once during <code>$.nette.init();</code> call.</td>
+	</tr>
+	<tr>
+		<td><code>load</code></td>
+		<td><code>requestHandler</code></td>
+		<td>Should contain ajaxification. <code>requestHandler</code> can be bound to UI events to initiate AJAX request.</td>
+	</tr>
+	<tr>
+		<td><code>before</code></td>
+		<td><code>jqXHR</code>, <code>settings</code></td>
+		<td>Called immediatelly before AJAX request execution. If FALSE is returned, request won't start.</td>
+	</tr>
+	<tr>
+		<td><code>start</code></td>
+		<td><code>jqXHR</code>, <code>settings</code></td>
+		<td>Called immediatelly after start of AJAX request.</td>
+	</tr>
+	<tr>
+		<td><code>success</code></td>
+		<td><code>payload</code></td>
+		<td>Called after successful completion of AJAX request. Equivalent to <code>$.ajax( ... ).done( ...</code>.</td>
+	</tr>
+	<tr>
+		<td><code>complete</code></td>
+		<td></td>
+		<td>Called after every AJAX request completion. Equivalent to <code>$.ajax( ... ).always( ...</code>.</td>
+	</tr>
+	<tr>
+		<td><code>error</code></td>
+		<td><code>jqXHR</code>, <code>status</code>, <code>error</code></td>
+		<td>Called in case of failure of AJAX request. Equivalent to <code>$.ajax( ... ).fail( ...</code>.</td>
+	</tr>
+</table>
 
-Event callbacks receive arguments as shown in parentheses. All of them also get instance of plugin itself as last argument. That means both markups are equivalent:
+Extension can be disabled:
 
 ```js
-success: function () {
-	$.nette.load();
-}
+$.nette.ext('name', null);
 ```
 
-```js
-success: function (payload, nette) {
-	nette.load();
-}
-```
-
-Extension may be disabled by calling: `$.nette.ext('name', null);`. You can also modify it directly - just grab the instance of extension by calling `$.nette.ext('name');` without other arguments. Returned object is instance of context:
+Extension can be configured. Its context can be acquired by:
 
 ```js
-// context of extension
-$.nette.ext('unique');
+var context = $.nette.ext('name');
 ```
 
 ## Default extensions
 
-### Validation
-
-Performs various checks of event causing the request:
-
-- CTRL, ALT, SHIFT keys or middle mouse button will prevent ajaxification,
-- absolute URLs and hash links will prevent ajaxification,
-- also performs validation of submitted form.
-
-Validation for element can be disabled by HTML 5 data attribute `data-ajax-validate="false"`. You may also switch various parts of validation in `ajax()` method by providing `validate` key in options. For example:
-
-```js
-$('#link').click(function (e) {
-	$.nette.ajax({
-		validate: {
-			keys: false // CTRL, ALT etc. will not prevent ajaxification
-		}
-	}, this, e);
-});
-```
-
-### Forms
-
-Collects data from form elements including image button coordinates.
-
-### Snippets
-
-Ensures update of all invalidated snippets in DOM. Update routine can be altered by replacing any of 3 following methods:
-
-- `updateSnippet` calls other methods, handles IE issues with `<title>` snippet.
-- `getElement` implements default Nette implementation of snippets (name of snippet is its ID attribute).
-- `applySnippet` best place for adding some animations etc. Default implementation just calls `.html()`.
-
-### Redirect
-
-If payload contains `redirect` key, JS will perform change of location.
-
-### History
-
-Takes care of saving the state to browser history if possible.
-
-### Unique
-
-Ensures there is always just one request running. When one request begins, previous one will be aborted.
-
-### Abort
-
-User can abort running request by pressing ESC.
-
-### Init
-
-Special extension with default ajaxifying implementation. `init()` called with arguments will override it. Default implementation provides following parameters:
-
-- `linkSelector` for ajaxifying links
-- `formSelector` for ajaxifying submitting of form and clicking on its submit buttons and image buttons
-- `buttonSelector` for ajaxifying specific buttons in non-ajax forms
-
-All ajaxified elements should be marked by CSS class `ajax`.
+<table>
+	<tr>
+		<th>name</th>
+		<th>description</th>
+	</tr>
+	<tr>
+		<td><code>validation</code></td>
+		<td>Limits the ajaxification to clicks/submits without <em>Ctrl</em>, <em>Alt</em> or <em>Shift</em> key, local links and valid form submits.</td>
+	</tr>
+	<tr>
+		<td><code>forms</code></td>
+		<td>Adds support for submitting forms with all data, name of clicked button and coordinates of click in <code>[type=image]</code> inputs.</td>
+	</tr>
+	<tr>
+		<td><code>snippets</code></td>
+		<td>Updates DOM by <code>snippets</code> array in response (default Nette handling of Latte snippets).</td>
+	</tr>
+	<tr>
+		<td><code>redirect</code></td>
+		<td>Executes redirect to different URL (when <code>$this->redirect()</code> is called in presener). Can be replaced by <code>history</code> extension.</td>
+	</tr>
+	<tr>
+		<td><code>unique</code></td>
+		<td>Keeps only request running at the same moment.</td>
+	</tr>
+	<tr>
+		<td><code>abort</code></td>
+		<td>Allows user to abort running request by pressing <em>Escape</em>.</td>
+	</tr>
+	<tr>
+		<td><code>init</code></td>
+		<td>Default ajaxification.</td>
+	</tr>
+</table>
