@@ -56,7 +56,7 @@ $.nette.ext('history', {
 			}
 		}, this));
 	},
-	before: function (settings, ui) {
+	before: function (xhr, settings) {
 		if (!settings.nette) {
 			this.href = null;
 		} else if (!settings.nette.form) {
