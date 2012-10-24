@@ -194,21 +194,21 @@ var nette = function () {
 		xhr = $.ajax(settings);
 
 		if (xhr) {
-			xhr.done(function (payload) {
+			xhr.done(function (payload, status, xhr) {
 				inner.fire({
 					name: 'success',
 					off: settings.off || {}
-				}, payload);
+				}, payload, status, xhr);
 			}).fail(function (xhr, status, error) {
 				inner.fire({
-					name :'error',
+					name: 'error',
 					off: settings.off || {}
 				}, xhr, status, error);
-			}).always(function () {
+			}).always(function (xhr, status) {
 				inner.fire({
 					name: 'complete',
 					off: settings.off || {}
-				});
+				}, xhr, status);
 			});
 			inner.fire({
 				name: 'start',
