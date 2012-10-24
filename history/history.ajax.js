@@ -29,7 +29,7 @@ $.nette.ext('history', {
 		if (this.cache && (snippetsExt = $.nette.ext('snippets'))) {
 			this.handleUI = function (domCache) {
 				$.each(domCache, function () {
-					snippetsExt.updateSnippet(this.id, this.html);
+					snippetsExt.updateSnippet(this.id, this.html, true);
 				});
 				$.nette.load();
 			};
