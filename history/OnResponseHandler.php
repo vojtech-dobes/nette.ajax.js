@@ -71,6 +71,9 @@ class OnResponseHandler
 			} elseif ($this->forwardHasHappened && !isset($payload->redirect)) {
 				$payload->redirect = $application->getPresenter()->link('this');
 			}
+			$prop = new Property('Nette\Application\UI\Presenter', 'signalReceiver');
+			$prop->setAccessible(TRUE);
+			$payload->signal = $prop->getValue($application->getPresenter()) !== NULL;
 		}
 	}
 

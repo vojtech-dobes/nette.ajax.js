@@ -29,7 +29,7 @@ $.nette.ext('history', {
 		if (this.cache && (snippetsExt = $.nette.ext('snippets'))) {
 			this.handleUI = function (domCache) {
 				$.each(domCache, function () {
-					snippetsExt.updateSnippet(this.id, this.html);
+					snippetsExt.updateSnippet(this.id, this.html, true);
 				});
 				$.nette.load();
 			};
@@ -77,7 +77,7 @@ $.nette.ext('history', {
 				window.location.href = redirect;
 			}
 		}
-		if (this.href && this.href != window.location.href) {
+		if (!payload.signal && this.href && this.href != window.location.href) {
 			history.pushState({
 				nette: true,
 				href: this.href,

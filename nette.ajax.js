@@ -344,20 +344,24 @@ $.nette.ext('snippets', {
 		}
 	}
 }, {
-	updateSnippet: function (id, html) {
+	updateSnippet: function (id, html, back) {
 		var $el = this.getElement(id);
 		// Fix for setting document title in IE
 		if ($el.eq(0).tagName == 'TITLE') {
 			document.title = html;
 		} else {
-			this.applySnippet($el, html);
+			this.applySnippet($el, html, back);
 		}
 	},
 	getElement: function (id) {
 		return $('#' + this.escapeSelector(id));
 	},
-	applySnippet: function ($el, html) {
-		$el.html(html);
+	applySnippet: function ($el, html, back) {
+		if (!back && $el.is('[data-ajax-append]')) {
+			$el.append(html);
+		} else {
+			$el.html(html);
+		}
 	},
 	escapeSelector: function (selector) {
 		// thx to @uestla (https://github.com/uestla)
