@@ -25,8 +25,9 @@ var handleState = function (context, name, args) {
 
 $.nette.ext('history', {
 	init: function () {
-		var snippetsExt;
-		if (this.cache && (snippetsExt = $.nette.ext('snippets'))) {
+		var stateExt = this.stateExt = this.ext('state', true);
+		var snippetsExt = this.ext('snippets');
+		if (this.cache && snippetsExt) {
 			this.handleUI = function (domCache) {
 				$.each(domCache, function () {
 					snippetsExt.updateSnippet(this.id, this.html, true);
@@ -38,6 +39,7 @@ $.nette.ext('history', {
 		history.replaceState(this.initialState = {
 			nette: true,
 			href: window.location.href,
+			state: {},
 			title: document.title,
 			ui: findSnippets()
 		}, document.title, window.location.href);
@@ -48,10 +50,15 @@ $.nette.ext('history', {
 			if (this.cache && state.ui) {
 				handleState(this, 'UI', [state.ui]);
 				handleState(this, 'title', [state.title]);
+				handleState(this, 'state', [state.state]);
 			} else {
 				$.nette.ajax({
 					url: state.href,
-					off: ['history']
+					off: ['history', 'state']
+				}).done(function (payload) {
+					if (payload.state) {
+						stateExt.state = state;
+					}
 				});
 			}
 		}, this));
@@ -77,10 +84,11 @@ $.nette.ext('history', {
 				window.location.href = redirect;
 			}
 		}
-		if (!payload.signal && this.href && this.href != window.location.href) {
+		if ((!payload.signal || redirect) && this.href && this.href != window.location.href) {
 			history.pushState({
 				nette: true,
 				href: this.href,
+				state: payload.state || null,
 				title: document.title,
 				ui: findSnippets()
 			}, document.title, this.href);
@@ -92,6 +100,9 @@ $.nette.ext('history', {
 	cache: true,
 	handleTitle: function (title) {
 		document.title = title;
+	},
+	handleState: function (state) {
+		this.stateExt.state = state;
 	}
 });
 

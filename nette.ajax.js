@@ -295,6 +295,26 @@ $.nette.ext('validation', {
 	explicitNoAjax: false
 });
 
+// current page state (persistent parameters)
+$.nette.ext('state', {
+	prepare: function (settings) {
+		if (this.state) {
+			if (typeof settings.data == 'string') {
+				settings.data += '&' + $.param(this.state);
+			} else if (typeof settings.data == 'object') {
+				settings.data = $.extend(settings.data || {}, this.state);
+			} else if (!settings.data) {
+				settings.data = this.state;
+			}
+		}
+	},
+	success: function (payload) {
+		if (payload.state) {
+			this.state = payload.state;
+		}
+	}
+}, {state: null});
+
 $.nette.ext('forms', {
 	success: function (payload) {
 		var snippets;
@@ -380,15 +400,6 @@ $.nette.ext('redirect', {
 		}
 	}
 });
-
-// current page state
-$.nette.ext('state', {
-	success: function (payload) {
-		if (payload.state) {
-			this.state = payload.state;
-		}
-	}
-}, {state: null});
 
 // abort last request if new started
 $.nette.ext('unique', {
