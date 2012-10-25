@@ -21,6 +21,7 @@ var nette = function () {
 		on: {
 			init: {},
 			load: {},
+			prepare: {},
 			before: {},
 			start: {},
 			success: {},
@@ -179,6 +180,11 @@ var nette = function () {
 			}
 		}
 
+		inner.fire({
+			name: 'prepare',
+			off: settings.off || {}
+		}, settings);
+
 		originalBeforeSend = settings.beforeSend;
 		settings.beforeSend = function (xhr, settings) {
 			if (originalBeforeSend) {
@@ -300,7 +306,7 @@ $.nette.ext('forms', {
 			});
 		}
 	},
-	before: function (xhr, settings) {
+	prepare: function (settings) {
 		var analyze = settings.nette;
 		if (!analyze || !analyze.form) return;
 		var e = analyze.e;
@@ -327,10 +333,6 @@ $.nette.ext('forms', {
 		}
 		formData = $.param(formData);
 		settings.data = analyze.form.serialize() + (formData ? '&' + formData : '') + '&' + originalData;
-
-		if (settings.contentType !== false) {
-			xhr.setRequestHeader('Content-Type', settings.contentType);
-		}
 	}
 });
 
