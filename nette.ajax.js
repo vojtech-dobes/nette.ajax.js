@@ -184,6 +184,9 @@ var nette = function () {
 			name: 'prepare',
 			off: settings.off || {}
 		}, settings);
+		if (settings.prepare) {
+			settings.prepare(settings);
+		}
 
 		originalBeforeSend = settings.beforeSend;
 		settings.beforeSend = function (xhr, settings) {
@@ -220,6 +223,9 @@ var nette = function () {
 				name: 'start',
 				off: settings.off || {}
 			}, xhr, settings);
+			if (settings.start) {
+				settings.start(xhr, settings);
+			}
 		}
 		return xhr;
 	};
