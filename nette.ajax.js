@@ -375,7 +375,7 @@ $.nette.ext('snippets', {
 	updateSnippet: function (id, html, back) {
 		var $el = this.getElement(id);
 		// Fix for setting document title in IE
-		if ($el.eq(0).tagName == 'TITLE') {
+		if ($el.get(0).tagName == 'TITLE') {
 			document.title = html;
 		} else {
 			this.applySnippet($el, html, back);
