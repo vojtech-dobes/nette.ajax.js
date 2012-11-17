@@ -173,3 +173,66 @@ var context = $.nette.ext('name');
 		<td>Default ajaxification.</td>
 	</tr>
 </table>
+
+## Useful tricks
+
+All these special features expect all default extensions to be on.
+
+### `data-ajax-off`
+
+Link or any other ajaxified element can have custom data attribute `data-ajax-off`. It contains names of extensions, that should be deactivated for Ajax request fired on element.
+
+```html
+<a n:href="do!" class="ajax" data-ajax-off="snippets">
+```
+
+You can also use it in `$.nette.ajax()`. Like this:
+
+```js
+$.nette.ajax({
+	url: ...,
+	off: ['snippets']
+});
+```
+
+### `data-ajax-pass` (in `validation` extension)
+
+Ajaxification of element ensures, that `e.preventDefault()` will be called. This attribute can prevent it, if you need more callbacks to be fired.
+
+### `data-ajax-append` (in `snippets` extension)
+
+New content of snippet with this attribute won't replace the old content, but it will rather be appended to it.
+
+### `data-ajax-validate` (in `validation` extension)
+
+Click on link or submittion of form is validated on various conditions. You can switch any of them:
+
+```html
+<a n:href="do!" class="ajax" data-ajax-validate='{"keys":false}'>
+```
+
+And as in case of `data-ajax-off`, you can pass it right into `$.nette.ajax()`.
+
+```js
+$.nette.ajax({
+	url: ...,
+	validate: {
+		keys: false
+	}
+});
+```
+
+This means that clicking link with Ctrl will not open new tab, but will ajaxify request.
+
+### Dependency on other extension
+
+In event callbacks, you can call `this.ext()` to get context of other extension. If you add `true` as second argument, script will fail if that extension won't be available.
+
+```js
+$.nette.ext({
+	success: function (payload) {
+		var snippets = this.ext('snippets', true);
+		...
+	}
+});
+```
