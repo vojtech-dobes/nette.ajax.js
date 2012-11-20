@@ -302,15 +302,15 @@ $.nette.ext('validation', {
 });
 
 $.nette.ext('forms', {
-	success: function (payload) {
+	init: function () {
 		var snippets;
-		if (!window.Nette || !payload.snippets || !(snippets = this.ext('snippets'))) return;
+		if (!window.Nette || !(snippets = this.ext('snippets'))) return;
 
-		for (var id in payload.snippets) {
-			snippets.getElement(id).find('form').each(function() {
+		snippets.after(function ($el) {
+			$el.find('form').each(function() {
 				window.Nette.initForm(this);
 			});
-		}
+		});
 	},
 	prepare: function (settings) {
 		var analyze = settings.nette;
@@ -345,15 +345,38 @@ $.nette.ext('forms', {
 // default snippet handler
 $.nette.ext('snippets', {
 	success: function (payload) {
+		var snippets = [];
 		if (payload.snippets) {
 			for (var i in payload.snippets) {
-				this.updateSnippet(i, payload.snippets[i]);
+				var $el = this.getElement(i);
+				$.each(this.beforeQueue, function (index, callback) {
+					if (typeof callback == 'function') {
+						callback($el);
+					}
+				});
+				this.updateSnippet($el, payload.snippets[i]);
+				$.each(this.afterQueue, function (index, callback) {
+					if (typeof callback == 'function') {
+						callback($el);
+					}
+				});
 			}
 		}
+		this.before(snippets);
 	}
 }, {
-	updateSnippet: function (id, html, back) {
-		var $el = this.getElement(id);
+	beforeQueue: [],
+	afterQueue: [],
+	before: function (callback) {
+		this.beforeQueue.push(callback);
+	},
+	after: function (callback) {
+		this.afterQueue.push(callback);
+	},
+	updateSnippet: function ($el, html, back) {
+		if (typeof $el == 'string') {
+			$el = this.getElement($el);
+		}
 		// Fix for setting document title in IE
 		if ($el.get(0).tagName == 'TITLE') {
 			document.title = html;

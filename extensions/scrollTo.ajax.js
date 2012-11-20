@@ -4,19 +4,20 @@
  * Depends on 'snippets' extension
  */
 $.nette.ext('scrollTo', {
-	success: function (payload) {
-		var snippetsExtension = this.ext('snippets', true);
-		if (payload.snippets) {
-			for (var id in payload.snippets) {
-				var $el = snippetsExtension.getElement(id);
-				if ($el.eq(0).tagName != 'TITLE') {
-					var offset = $el.offset();
-					scrollTo(offset.left, offset.top);
-					break;
-				}
+	init: function () {
+		this.ext('snippets', true).before($.proxy(function ($el) {
+			if (this.shouldTry && $el.eq(0).tagName != 'TITLE') {
+				var offset = $el.offset();
+				scrollTo(offset.left, offset.top);
+				this.shouldTry = false;
 			}
-		}
+		}), this);
+	},
+	success: function (payload) {
+		this.shouldTry = true;
 	}
+}, {
+	shouldTry: true
 });
 
 })(jQuery);
