@@ -5,6 +5,8 @@
  * @copyright Copyright (c) 2009, 2010 David Grudl
  * @copyright Copyright (c) 2012 Vojtěch Dobeš
  * @license MIT
+ *
+ * @version 1.2.1
  */
 
 (function($, undefined) {
