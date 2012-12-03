@@ -281,7 +281,7 @@ $.nette.ext('validation', {
 		}
 
 		if (validate.form && analyze.form && !((analyze.isSubmit || analyze.isImage) && analyze.el.attr('formnovalidate') !== undefined)) {
-			if (analyze.form.get(0).onsubmit && !analyze.form.get(0).onsubmit()) {
+			if (analyze.form.get(0).onsubmit && analyze.form.get(0).onsubmit() === false) {
 				e.stopImmediatePropagation();
 				e.preventDefault();
 				return false;
