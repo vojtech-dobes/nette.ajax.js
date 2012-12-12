@@ -1,3 +1,4 @@
+
 /**
  * AJAX Nette Framework plugin for jQuery
  *
@@ -457,16 +458,12 @@ $.nette.ext('abort', {
 $.nette.ext('init', {
 	load: function (rh) {
 		$(this.linkSelector).off('click.nette', rh).on('click.nette', rh);
-		var $forms = $(this.formSelector);
-		$forms.off('submit.nette', rh).on('submit.nette', rh);
-		$forms.off('click.nette', ':image', rh).on('click.nette', ':image', rh);
-		$forms.off('click.nette', ':submit', rh).on('click.nette', ':submit', rh);
-
-		var buttonSelector = this.buttonSelector;
-		$(buttonSelector).each(function () {
-			$(this).closest('form')
-				.off('click.nette', buttonSelector, rh)
-				.on('click.nette', buttonSelector, rh);
+		$(this.formSelector).off('submit.nette', rh).on('submit.nette', rh)
+			.off('click.nette', ':image', rh).on('click.nette', ':image', rh)
+			.off('click.nette', ':submit', rh).on('click.nette', ':submit', rh);
+		$(this.buttonSelector).each(function () {
+			$(this).closest('form').off('click.nette', this.buttonSelector, rh)
+				.on('click.nette', this.buttonSelector, rh);
 		});
 	},
 	success: function () {
