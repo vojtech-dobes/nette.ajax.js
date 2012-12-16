@@ -454,6 +454,12 @@ $.nette.ext('abort', {
 	}
 }, {xhr: null});
 
+$.nette.ext('load', {
+	success: function () {
+		$.nette.load();
+	}
+});
+
 // default ajaxification (can be overridden in init())
 $.nette.ext('init', {
 	load: function (rh) {
@@ -465,9 +471,6 @@ $.nette.ext('init', {
 			$(this).closest('form').off('click.nette', this.buttonSelector, rh)
 				.on('click.nette', this.buttonSelector, rh);
 		});
-	},
-	success: function () {
-		$.nette.load();
 	}
 }, {
 	linkSelector: 'a.ajax',
