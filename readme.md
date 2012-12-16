@@ -99,6 +99,11 @@ Second argument should be hash of callbacks with keys corresponding to names of 
 		<td>Should contain ajaxification. <code>requestHandler</code> can be bound to UI events to initiate AJAX request.</td>
 	</tr>
 	<tr>
+		<td><code>prepare</code></td>
+		<td><code>settings</code></td>
+		<td>Called immediatelly before AJAX request creation. It is possible to edit base $.ajax() parameters in <code>settings</code>.</td>
+	</tr>
+	<tr>
 		<td><code>before</code></td>
 		<td><code>jqXHR</code>, <code>settings</code></td>
 		<td>Called immediatelly before AJAX request execution. If FALSE is returned, request won't start.</td>

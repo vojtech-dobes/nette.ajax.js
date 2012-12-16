@@ -380,11 +380,13 @@ $.nette.ext('snippets', {
 		if (typeof $el == 'string') {
 			$el = this.getElement($el);
 		}
-		// Fix for setting document title in IE
-		if ($el.get(0).tagName == 'TITLE') {
-			document.title = html;
-		} else {
-			this.applySnippet($el, html, back);
+		if ($el.get(0) !== undefined) {
+			// Fix for setting document title in IE
+			if ($el.get(0).tagName == 'TITLE') {
+				document.title = html;
+			} else {
+				this.applySnippet($el, html, back);
+			}
 		}
 	},
 	getElement: function (id) {
