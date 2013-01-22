@@ -159,7 +159,7 @@ var nette = function () {
 				ui: ui,
 				el: $el,
 				isForm: $el.is('form'),
-				isSubmit: $el.is('input[type=submit]'),
+				isSubmit: $el.is('input[type=submit]') || $el.is('button[type=submit]'),
 				isImage: $el.is('input[type=image]'),
 				form: null
 			};
