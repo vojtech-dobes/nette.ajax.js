@@ -205,7 +205,7 @@ var nette = function () {
 
 		xhr = $.ajax(settings);
 
-		if (xhr) {
+		if (xhr && (typeof xhr.statusText === 'undefined' || xhr.statusText !== 'canceled')) {
 			xhr.done(function (payload, status, xhr) {
 				inner.fire({
 					name: 'success',
