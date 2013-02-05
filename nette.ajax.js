@@ -467,10 +467,8 @@ $.nette.ext('init', {
 		$(this.formSelector).off('submit.nette', rh).on('submit.nette', rh)
 			.off('click.nette', ':image', rh).on('click.nette', ':image', rh)
 			.off('click.nette', ':submit', rh).on('click.nette', ':submit', rh);
-		$(this.buttonSelector).each(function () {
-			$(this).closest('form').off('click.nette', this.buttonSelector, rh)
-				.on('click.nette', this.buttonSelector, rh);
-		});
+		$(this.buttonSelector).closest('form')
+			.off('click.nette', this.buttonSelector, rh).on('click.nette', this.buttonSelector, rh);
 	}
 }, {
 	linkSelector: 'a.ajax',
