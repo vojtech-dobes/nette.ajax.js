@@ -1,4 +1,3 @@
-
 /**
  * AJAX Nette Framework plugin for jQuery
  *
@@ -468,8 +467,8 @@ $.nette.ext('init', {
 			.off('click.nette', ':image', rh).on('click.nette', ':image', rh)
 			.off('click.nette', ':submit', rh).on('click.nette', ':submit', rh);
 		$(this.buttonSelector).each(function () {
-			$(this).closest('form').off('click.nette', this.buttonSelector, rh)
-				.on('click.nette', this.buttonSelector, rh);
+			$(this).off('click.nette')
+				.on('click.nette', this, rh);
 		});
 	}
 }, {
