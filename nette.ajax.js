@@ -240,6 +240,10 @@ $.fn.netteAjax = function (e, options) {
 	return $.nette.ajax(options || {}, this[0], e);
 };
 
+$.fn.netteAjaxOff = function () {
+	return this.off('.nette');
+};
+
 $.nette.ext('validation', {
 	before: function (xhr, settings) {
 		if (!settings.nette) return true;
