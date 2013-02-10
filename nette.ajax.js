@@ -88,7 +88,7 @@ var nette = function () {
 		} else if (callbacks === undefined) {
 			return inner.contexts[name];
 		} else if (!callbacks) {
-			$.each(['init', 'load', 'before', 'start', 'success', 'complete', 'error'], function (index, event) {
+			$.each(['init', 'load', 'prepare', 'before', 'start', 'success', 'complete', 'error'], function (index, event) {
 				inner.on[event][name] = undefined;
 			});
 			inner.contexts[name] = undefined;
