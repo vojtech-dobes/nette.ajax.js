@@ -1,4 +1,3 @@
-
 /**
  * AJAX Nette Framework plugin for jQuery
  *
@@ -10,7 +9,7 @@
  * @version 1.2.1
  */
 
-(function($, undefined) {
+(function(window, $, undefined) {
 
 if (typeof $ != 'function') {
 	return console.error('nette.ajax.js: jQuery is missing, load it please');
@@ -480,4 +479,4 @@ $.nette.ext('init', {
 	buttonSelector: 'input.ajax[type="submit"], button.ajax[type="submit"], input.ajax[type="image"]'
 });
 
-})(window.jQuery);
+})(window, window.jQuery);
