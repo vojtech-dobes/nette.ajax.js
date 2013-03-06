@@ -19,9 +19,9 @@ $.nette.ext('fidRemove', {
 }, {
 	timeout: 3000,
 	removeFid: function (url, pos) {
-		if ((url.substr(url.length - 1) === '?') || (url.substr(url.length - 1) === '&')) {
-			url = url.substr(0, url.length - 1);
 		url = url.substr(0, pos) + url.substr(pos + 9);
+		if ((url.substr(pos - 1, 1) === '?') || (url.substr(pos - 1, 1) === '&')) {
+			url = url.substr(0, pos - 1) + url.substr(pos);
 		}
 		return url;
 	}
