@@ -93,7 +93,7 @@ var nette = function () {
 			});
 			inner.contexts[name] = undefined;
 		} else if (typeof name == 'string' && inner.contexts[name] !== undefined) {
-			throw 'Cannot override already registered nette-ajax extension.';
+			throw "Cannot override already registered nette-ajax extension '" + name + "'.";
 		} else {
 			inner.ext(callbacks, context, name);
 		}
