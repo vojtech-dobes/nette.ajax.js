@@ -5,7 +5,7 @@ if (!(window.history && history.pushState && window.history.replaceState && !nav
 
 // thx to @ic (http://forum.nette.org/cs/profile.php?id=1985, http://forum.nette.org/cs/4405-flash-zpravicky-bez-fid-v-url#p43713)
 
-$.nette.ext('history', {
+$.nette.ext('fidRemove', {
 	init: function () {
 		var url = window.location.toString();
 		var pos = url.indexOf('_fid=');
