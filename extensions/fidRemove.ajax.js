@@ -7,14 +7,14 @@ if (!(window.history && history.pushState && window.history.replaceState && !nav
 
 $.nette.ext('fidRemove', {
 	init: function () {
-		var url = window.location.toString();
-		var pos = url.indexOf('_fid=');
-		if (pos !== -1) {
-			url = this.removeFid(url, pos);
-			setTimeout(function () {
-				window.history.replaceState({}, null, url);
-			}, this.timeout);
-		}
+		var that = this;
+		setTimeout(function () {
+			var url = window.location.toString();
+			var pos = url.indexOf('_fid=');
+			if (pos !== -1) {
+				window.history.replaceState({}, null, that.removeFid(url, pos));
+			}
+		}, this.timeout);
 	}
 }, {
 	timeout: 3000,
