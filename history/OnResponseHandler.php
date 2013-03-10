@@ -11,8 +11,11 @@ use Nette\Reflection\Property;
 
 /**
  * Automatically adds 'redirect' to payload when forward happens
- * to simplify userland code in presenters
- * Also bypasses 'redirect()' calls with 'forward()' calls
+ * to simplify userland code in presenters.
+ *
+ * Also bypasses 'redirect()' calls with 'forward()' calls.
+ *
+ * Sets 'Vary: X-Requested-With' header to disable payload caching.
  *
  * @author Vojtěch Dobeš
  */
