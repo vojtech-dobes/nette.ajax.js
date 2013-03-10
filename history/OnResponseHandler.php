@@ -22,6 +22,9 @@ class OnResponseHandler
 	/** @var Http\IRequest */
 	private $httpRequest;
 
+	/** @var Http\IResponse */
+	private $httpResponse;
+
 	/** @var IRouter */
 	private $router;
 
@@ -32,11 +35,13 @@ class OnResponseHandler
 
 	/**
 	 * @param  Http\IRequest
+	 * @param  Http\IResponse
 	 * @param  IRouter
 	 */
-	public function __construct(Http\IRequest $httpRequest, IRouter $router)
+	public function __construct(Http\IRequest $httpRequest, Http\IResponse $httpResponse, IRouter $router)
 	{
 		$this->httpRequest = $httpRequest;
+		$this->httpResponse = $httpResponse;
 		$this->router = $router;
 	}
 
@@ -71,6 +76,7 @@ class OnResponseHandler
 			} elseif ($this->forwardHasHappened && !isset($payload->redirect)) {
 				$payload->redirect = $application->getPresenter()->link('this');
 			}
+			$this->httpResponse->addHeader('Vary', 'X-Requested-With');
 		}
 	}
 

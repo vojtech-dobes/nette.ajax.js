@@ -66,8 +66,6 @@ $.nette.ext('history', {
 		} else {
 			this.href = null;
 		}
-
-		settings.url += (settings.url.indexOf('?') === -1 ? '?' : '&') + this.ajaxParam + '=1';
 	},
 	success: function (payload) {
 		var redirect = payload.redirect || payload.url; // backwards compatibility for 'url'
@@ -94,8 +92,7 @@ $.nette.ext('history', {
 	cache: true,
 	handleTitle: function (title) {
 		document.title = title;
-	},
-	ajaxParam: '_ajax'
+	}
 });
 
 })(jQuery);
