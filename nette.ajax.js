@@ -352,9 +352,11 @@ $.nette.ext('forms', {
 $.nette.ext('snippets', {
 	success: function (payload) {
 		var snippets = [];
+		var elements = [];
 		if (payload.snippets) {
 			for (var i in payload.snippets) {
 				var $el = this.getElement(i);
+				elements.push($el.get(0));
 				$.each(this.beforeQueue, function (index, callback) {
 					if (typeof callback == 'function') {
 						callback($el);
@@ -367,16 +369,26 @@ $.nette.ext('snippets', {
 					}
 				});
 			}
+			var defer = $(elements).promise();
+			$.each(this.completeQueue, function (index, callback) {
+				if (typeof callback == 'function') {
+					defer.done(callback);
+				}
+			});
 		}
 	}
 }, {
 	beforeQueue: [],
 	afterQueue: [],
+	completeQueue: [],
 	before: function (callback) {
 		this.beforeQueue.push(callback);
 	},
 	after: function (callback) {
 		this.afterQueue.push(callback);
+	},
+	complete: function (callback) {
+		this.completeQueue.push(callback);
 	},
 	updateSnippet: function ($el, html, back) {
 		if (typeof $el == 'string') {
