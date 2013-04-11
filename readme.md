@@ -60,7 +60,7 @@ If this implementation doesn't suffice you, it can be overriden with custom solu
 
 ```js
 $.nette.init(function (ajaxHandler) {
-	$('a.ajax:not(.no-ajax)').live('click', ajaxHandler);
+	$('body').on('click', 'a.ajax:not(.no-ajax)', ajaxHandler);
 });
 ```
 
