@@ -43,7 +43,7 @@ $.nette.ext('history', {
 		}, document.title, window.location.href);
 
 		$(window).on('popstate.nette', $.proxy(function (e) {
-			var state = e.originalEvent.state || this.initialState;
+			var state = e.originalEvent.state;
 			if (window.history.ready || !state || !state.nette) return;
 			if (this.cache && state.ui) {
 				handleState(this, 'UI', [state.ui]);
