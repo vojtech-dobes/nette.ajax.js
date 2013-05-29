@@ -202,7 +202,18 @@ var nette = function () {
 			}, xhr, settings);
 		};
 
-		xhr = $.ajax(settings);
+		return this.handleXHR($.ajax(settings), settings);
+	};
+
+	/**
+	 * Binds extension callbacks to existing XHR object
+	 *
+	 * @param  {jqXHR|null}
+	 * @param  {object} settings
+	 * @return {jqXHR|null}
+	 */
+	this.handleXHR = function (xhr, settings) {
+		settings = settings || {};
 
 		if (xhr && (typeof xhr.statusText === 'undefined' || xhr.statusText !== 'canceled')) {
 			xhr.done(function (payload, status, xhr) {
