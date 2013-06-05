@@ -367,7 +367,9 @@ $.nette.ext('snippets', {
 		if (payload.snippets) {
 			for (var i in payload.snippets) {
 				var $el = this.getElement(i);
-				elements.push($el.get(0));
+				if ($el.get(0)) {
+					elements.push($el.get(0));
+				}
 				$.each(this.beforeQueue, function (index, callback) {
 					if (typeof callback == 'function') {
 						callback($el);
