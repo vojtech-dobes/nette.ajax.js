@@ -192,14 +192,14 @@ var nette = function () {
 
 		originalBeforeSend = settings.beforeSend;
 		settings.beforeSend = function (xhr, settings) {
-			if (originalBeforeSend) {
-				var result = originalBeforeSend(xhr, settings);
-				if (result !== undefined && !result) return result;
-			}
-			return inner.fire({
+			var result = inner.fire({
 				name: 'before',
 				off: settings.off || {}
 			}, xhr, settings);
+			if ((result || result === undefined) && originalBeforeSend) {
+				result = originalBeforeSend(xhr, settings);
+			}
+			return result;
 		};
 
 		return this.handleXHR($.ajax(settings), settings);
