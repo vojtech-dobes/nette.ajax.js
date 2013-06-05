@@ -77,9 +77,9 @@ var nette = function () {
 	 * When called with 2. argument equal to false, it removes extension entirely.
 	 * When called with 2. argument equal to hash of event callbacks, it adds new extension.
 	 *
-	 * @param  {string} Name of extension
-	 * @param  {bool|object|null} Set of callbacks for any events OR false for removing extension.
-	 * @param  {object|null} Context for added extension
+	 * @param  {string} name Name of extension
+	 * @param  {bool|object|null} callbacks Set of callbacks for any events OR false for removing extension.
+	 * @param  {object|null} context Context for added extension
 	 * @return {$.nette|object} Provides a fluent interface OR returns extensions with given name
 	 */
 	this.ext = function (name, callbacks, context) {
@@ -106,8 +106,8 @@ var nette = function () {
 	 * - when called with any arguments, it will override default 'init' extension
 	 *   with provided callbacks
 	 *
-	 * @param  {function|object|null} Callback for 'load' event or entire set of callbacks for any events
-	 * @param  {object|null} Context provided for callbacks in first argument
+	 * @param  {function|object|null} load Callback for 'load' event or entire set of callbacks for any events
+	 * @param  {object|null} loadContext Context provided for callbacks in first argument
 	 * @return {$.nette} Provides a fluent interface
 	 */
 	this.init = function (load, loadContext) {
@@ -146,8 +146,8 @@ var nette = function () {
 	 * Executes AJAX request. Attaches listeners and events.
 	 *
 	 * @param  {object} settings
-	 * @param  {Element|null} ussually Anchor or Form
-	 * @param  {event|null} event causing the request
+	 * @param  {Element|null} ui ussually Anchor or Form
+	 * @param  {event|null} e event causing the request
 	 * @return {jqXHR|null}
 	 */
 	this.ajax = function (settings, ui, e) {
@@ -208,7 +208,7 @@ var nette = function () {
 	/**
 	 * Binds extension callbacks to existing XHR object
 	 *
-	 * @param  {jqXHR|null}
+	 * @param  {jqXHR|null} xhr
 	 * @param  {object} settings
 	 * @return {jqXHR|null}
 	 */
