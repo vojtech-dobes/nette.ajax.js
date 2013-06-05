@@ -11,7 +11,7 @@
 
 (function(window, $, undefined) {
 
-if (typeof $ != 'function') {
+if (typeof $ !== 'function') {
 	return console.error('nette.ajax.js: jQuery is missing, load it please');
 }
 
@@ -34,8 +34,8 @@ var nette = function () {
 			var result = true;
 			var args = Array.prototype.slice.call(arguments);
 			var props = args.shift();
-			var name = (typeof props == 'string') ? props : props.name;
-			var off = (typeof props == 'object') ? props.off || {} : {};
+			var name = (typeof props === 'string') ? props : props.name;
+			var off = (typeof props === 'object') ? props.off || {} : {};
 			args.push(inner.self);
 			$.each(inner.on[name], function (index, reaction) {
 				if (reaction === undefined || $.inArray(index, off) !== -1) return true;
@@ -83,7 +83,7 @@ var nette = function () {
 	 * @return {$.nette|object} Provides a fluent interface OR returns extensions with given name
 	 */
 	this.ext = function (name, callbacks, context) {
-		if (typeof name == 'object') {
+		if (typeof name === 'object') {
 			inner.ext(name, callbacks);
 		} else if (callbacks === undefined) {
 			return inner.contexts[name];
@@ -92,7 +92,7 @@ var nette = function () {
 				inner.on[event][name] = undefined;
 			});
 			inner.contexts[name] = undefined;
-		} else if (typeof name == 'string' && inner.contexts[name] !== undefined) {
+		} else if (typeof name === 'string' && inner.contexts[name] !== undefined) {
 			throw "Cannot override already registered nette-ajax extension '" + name + "'.";
 		} else {
 			inner.ext(callbacks, context, name);
@@ -113,12 +113,12 @@ var nette = function () {
 	this.init = function (load, loadContext) {
 		if (inner.initialized) throw 'Cannot initialize nette-ajax twice.';
 
-		if (typeof load == 'function') {
+		if (typeof load === 'function') {
 			this.ext('init', null);
 			this.ext('init', {
 				load: load
 			}, loadContext);
-		} else if (typeof load == 'object') {
+		} else if (typeof load === 'object') {
 			this.ext('init', null);
 			this.ext('init', load, loadContext);
 		} else if (load !== undefined) {
@@ -178,7 +178,7 @@ var nette = function () {
 
 			if ($el.is('[data-ajax-off]')) {
 				settings.off = $el.data('ajaxOff');
-				if (typeof settings.off == 'string') settings.off = [settings.off];
+				if (typeof settings.off === 'string') settings.off = [settings.off];
 			}
 		}
 
@@ -271,13 +271,13 @@ $.nette.ext('validation', {
 				keys: false,
 				url: false,
 				form: false
-			}; else if (typeof attr == 'object') return attr;
+			}; else if (typeof attr === 'object') return attr;
  		})() || {});
 
 		var passEvent = false;
 		if (analyze.el.attr('data-ajax-pass') !== undefined) {
 			passEvent = analyze.el.data('ajaxPass');
-			passEvent = typeof passEvent == 'bool' ? passEvent : true;
+			passEvent = typeof passEvent === 'bool' ? passEvent : true;
 		}
 
 		if (validate.keys) {
@@ -351,7 +351,7 @@ $.nette.ext('forms', {
 			}
 		}
 
-		if (typeof originalData != 'string') {
+		if (typeof originalData !== 'string') {
 			originalData = $.param(originalData);
 		}
 		formData = $.param(formData);
@@ -369,20 +369,20 @@ $.nette.ext('snippets', {
 				var $el = this.getElement(i);
 				elements.push($el.get(0));
 				$.each(this.beforeQueue, function (index, callback) {
-					if (typeof callback == 'function') {
+					if (typeof callback === 'function') {
 						callback($el);
 					}
 				});
 				this.updateSnippet($el, payload.snippets[i]);
 				$.each(this.afterQueue, function (index, callback) {
-					if (typeof callback == 'function') {
+					if (typeof callback === 'function') {
 						callback($el);
 					}
 				});
 			}
 			var defer = $(elements).promise();
 			$.each(this.completeQueue, function (index, callback) {
-				if (typeof callback == 'function') {
+				if (typeof callback === 'function') {
 					defer.done(callback);
 				}
 			});
@@ -402,7 +402,7 @@ $.nette.ext('snippets', {
 		this.completeQueue.push(callback);
 	},
 	updateSnippet: function ($el, html, back) {
-		if (typeof $el == 'string') {
+		if (typeof $el === 'string') {
 			$el = this.getElement($el);
 		}
 		// Fix for setting document title in IE
@@ -464,7 +464,7 @@ $.nette.ext('unique', {
 $.nette.ext('abort', {
 	init: function () {
 		$('body').keydown($.proxy(function (e) {
-			if (this.xhr && (e.keyCode == 27 // Esc
+			if (this.xhr && (e.keyCode.toString() === '27' // Esc
 			&& !(e.ctrlKey || e.shiftKey || e.altKey || e.metaKey))
 			) {
 				this.xhr.abort();
