@@ -356,6 +356,8 @@ $.nette.ext('forms', {
 		}
 		formData = $.param(formData);
 		settings.data = analyze.form.serialize() + (formData ? '&' + formData : '') + '&' + originalData;
+
+		analyze.form.find('input[type="password"]').val('');
 	}
 });
 
