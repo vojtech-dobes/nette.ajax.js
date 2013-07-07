@@ -177,8 +177,22 @@ var nette = function () {
 			}
 
 			if ($el.is('[data-ajax-off]')) {
-				settings.off = $el.data('ajaxOff');
+				var rawOff = $el.attr('data-ajax-off');
+				if (rawOff.indexOf('[') === 0) {
+					settings.off = $el.data('ajaxOff');
+				} else if (rawOff.indexOf(',') !== -1) {
+					settings.off = rawOff.split(',');
+				} else if (rawOff.indexOf(' ') !== -1) {
+					settings.off = rawOff.split(' ');
+				} else {
+					settings.off = rawOff;
+				}
 				if (typeof settings.off === 'string') settings.off = [settings.off];
+				settings.off = $.grep($.each(settings.off, function (off) {
+					return $.trim(off);
+				}), function (off) {
+					return off.length;
+				});
 			}
 		}
 
