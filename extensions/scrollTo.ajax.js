@@ -6,12 +6,12 @@
 $.nette.ext('scrollTo', {
 	init: function () {
 		this.ext('snippets', true).before($.proxy(function ($el) {
-			if (this.shouldTry && $el.eq(0).tagName != 'TITLE') {
+			if (this.shouldTry && !$el.is('title')) {
 				var offset = $el.offset();
 				scrollTo(offset.left, offset.top);
 				this.shouldTry = false;
 			}
-		}), this);
+		}, this));
 	},
 	success: function (payload) {
 		this.shouldTry = true;
