@@ -110,17 +110,17 @@ Second argument should be hash of callbacks with keys corresponding to names of 
 	</tr>
 	<tr>
 		<td><code>success</code></td>
-		<td><code>payload</code></td>
+		<td><code>payload</code>, <code>status</code>, <code>jqXHR</code>, <code>settings</code></td>
 		<td>Called after successful completion of AJAX request. Equivalent to <code>$.ajax( ... ).done( ...</code>.</td>
 	</tr>
 	<tr>
 		<td><code>complete</code></td>
-		<td></td>
+		<td><code>jqXHR</code>, <code>status</code>, <code>settings</code></td>
 		<td>Called after every AJAX request completion. Equivalent to <code>$.ajax( ... ).always( ...</code>.</td>
 	</tr>
 	<tr>
 		<td><code>error</code></td>
-		<td><code>jqXHR</code>, <code>status</code>, <code>error</code></td>
+		<td><code>jqXHR</code>, <code>status</code>, <code>error</code>, <code>settings</code></td>
 		<td>Called in case of failure of AJAX request. Equivalent to <code>$.ajax( ... ).fail( ...</code>.</td>
 	</tr>
 </table>

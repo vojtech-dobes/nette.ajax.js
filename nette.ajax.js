@@ -234,17 +234,17 @@ var nette = function () {
 				inner.fire({
 					name: 'success',
 					off: settings.off || {}
-				}, payload, status, xhr);
+				}, payload, status, xhr, settings);
 			}).fail(function (xhr, status, error) {
 				inner.fire({
 					name: 'error',
 					off: settings.off || {}
-				}, xhr, status, error);
+				}, xhr, status, error, settings);
 			}).always(function (xhr, status) {
 				inner.fire({
 					name: 'complete',
 					off: settings.off || {}
-				}, xhr, status);
+				}, xhr, status, settings);
 			});
 			inner.fire({
 				name: 'start',
