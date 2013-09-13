@@ -56,12 +56,10 @@ Ajaxification is bound to `click` (`submit`) event in `nette` namespace. Ajaxifi
 $('a.no-ajax').off('click.nette');
 ```
 
-If this implementation doesn't suffice you, it can be overriden with custom solution, e.g.:
+Or even simpler:
 
 ```js
-$.nette.init(function (ajaxHandler) {
-	$('a.ajax:not(.no-ajax)').live('click', ajaxHandler);
-});
+$('a.no-ajax').netteAjaxOff();
 ```
 
 ## Extensions
