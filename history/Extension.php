@@ -2,13 +2,17 @@
 
 namespace VojtechDobes\NetteAjax;
 
-use Nette\Config\CompilerExtension;
+use Nette\DI;
+
+if (!class_exists('Nette\DI\CompilerExtension')) {
+	class_alias('Nette\Config\CompilerExtension', 'Nette\DI\CompilerExtension');
+}
 
 
 /**
  * Provides support for History API
  */
-class Extension extends CompilerExtension
+class Extension extends DI\CompilerExtension
 {
 
 	public function loadConfiguration()
