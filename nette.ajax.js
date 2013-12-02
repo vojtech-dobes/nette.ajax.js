@@ -45,7 +45,7 @@ var nette = function () {
 			return result;
 		},
 		requestHandler: function (e) {
-			if (!inner.self.ajax({}, this, e)) return;
+			inner.self.ajax({}, this, e);
 		},
 		ext: function (callbacks, context, name) {
 			while (!name) {
