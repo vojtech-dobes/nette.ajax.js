@@ -380,6 +380,7 @@ $.nette.ext('forms', {
 // default snippet handler
 $.nette.ext('snippets', {
 	success: function (payload) {
+		var that = this;
 		var snippets = [];
 		var elements = [];
 		if (payload.snippets) {
@@ -388,38 +389,27 @@ $.nette.ext('snippets', {
 				if ($el.get(0)) {
 					elements.push($el.get(0));
 				}
-				$.each(this.beforeQueue, function (index, callback) {
-					if (typeof callback === 'function') {
-						callback($el);
-					}
-				});
+				this.beforeQueue.fire($el);
 				this.updateSnippet($el, payload.snippets[i]);
-				$.each(this.afterQueue, function (index, callback) {
-					if (typeof callback === 'function') {
-						callback($el);
-					}
-				});
+				this.afterQueue.fire($el);
 			}
-			var defer = $(elements).promise();
-			$.each(this.completeQueue, function (index, callback) {
-				if (typeof callback === 'function') {
-					defer.done(callback);
-				}
+			$(elements).promise().done(function () {
+				that.completeQueue.fire();
 			});
 		}
 	}
 }, {
-	beforeQueue: [],
-	afterQueue: [],
-	completeQueue: [],
+	beforeQueue: $.Callbacks(),
+	afterQueue: $.Callbacks(),
+	completeQueue: $.Callbacks(),
 	before: function (callback) {
-		this.beforeQueue.push(callback);
+		this.beforeQueue.add(callback);
 	},
 	after: function (callback) {
-		this.afterQueue.push(callback);
+		this.afterQueue.add(callback);
 	},
 	complete: function (callback) {
-		this.completeQueue.push(callback);
+		this.completeQueue.add(callback);
 	},
 	updateSnippet: function ($el, html, back) {
 		if (typeof $el === 'string') {
