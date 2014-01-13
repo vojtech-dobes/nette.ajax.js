@@ -7,7 +7,7 @@ $.nette.ext('redirect', false);
 
 var findSnippets = function () {
 	var result = [];
-	$('[id^="snippet--"]').each(function () {
+	$('[id^="snippet-"]').each(function () {
 		var $el = $(this);
 		result.push({
 			id: $el.attr('id'),
