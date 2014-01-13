@@ -45,7 +45,10 @@ var nette = function () {
 			return result;
 		},
 		requestHandler: function (e) {
-			inner.self.ajax({}, this, e);
+			var xhr = inner.self.ajax({}, this, e);
+			if (xhr && xhr._returnFalse) { // for IE 8
+				return false;
+			}
 		},
 		ext: function (callbacks, context, name) {
 			while (!name) {
@@ -325,6 +328,7 @@ $.nette.ext('validation', {
 		if (!passEvent) {
 			e.stopPropagation();
 			e.preventDefault();
+			xhr._returnFalse = true; // for IE 8
 		}
 		return true;
 	}
