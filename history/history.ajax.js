@@ -28,9 +28,11 @@ $.nette.ext('history', {
 		var snippetsExt;
 		if (this.cache && (snippetsExt = $.nette.ext('snippets'))) {
 			this.handleUI = function (domCache) {
+				var snippets = {};
 				$.each(domCache, function () {
-					snippetsExt.updateSnippet(this.id, this.html, true);
+					snippets[this.id] = this.html;
 				});
+				snippetsExt.updateSnippets(snippets, true);
 				$.nette.load();
 			};
 		}
