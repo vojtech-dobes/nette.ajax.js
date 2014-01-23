@@ -6,10 +6,16 @@ $.nette.ext('spinner', {
 		this.spinner.appendTo('body');
 	},
 	start: function () {
-		this.spinner.show(this.speed);
+		this.counter++;
+		if (this.counter === 1) {
+			this.spinner.show(this.speed);
+		}
 	},
 	complete: function () {
-		this.spinner.hide(this.speed);
+		this.counter--;
+		if (this.counter <= 0) {
+			this.spinner.hide(this.speed);
+		}
 	}
 }, {
 	createSpinner: function () {
@@ -21,7 +27,8 @@ $.nette.ext('spinner', {
 		});
 	},
 	spinner: null,
-	speed: undefined
+	speed: undefined,
+	counter: 0
 });
 
 })(jQuery);

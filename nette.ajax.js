@@ -45,7 +45,10 @@ var nette = function () {
 			return result;
 		},
 		requestHandler: function (e) {
-			inner.self.ajax({}, this, e);
+			var xhr = inner.self.ajax({}, this, e);
+			if (xhr && xhr._returnFalse) { // for IE 8
+				return false;
+			}
 		},
 		ext: function (callbacks, context, name) {
 			while (!name) {
@@ -325,6 +328,7 @@ $.nette.ext('validation', {
 		if (!passEvent) {
 			e.stopPropagation();
 			e.preventDefault();
+			xhr._returnFalse = true; // for IE 8
 		}
 		return true;
 	}
@@ -376,56 +380,45 @@ $.nette.ext('forms', {
 // default snippet handler
 $.nette.ext('snippets', {
 	success: function (payload) {
-		var snippets = [];
-		var elements = [];
 		if (payload.snippets) {
-			for (var i in payload.snippets) {
-				var $el = this.getElement(i);
-				if ($el.get(0)) {
-					elements.push($el.get(0));
-				}
-				$.each(this.beforeQueue, function (index, callback) {
-					if (typeof callback === 'function') {
-						callback($el);
-					}
-				});
-				this.updateSnippet($el, payload.snippets[i]);
-				$.each(this.afterQueue, function (index, callback) {
-					if (typeof callback === 'function') {
-						callback($el);
-					}
-				});
-			}
-			var defer = $(elements).promise();
-			$.each(this.completeQueue, function (index, callback) {
-				if (typeof callback === 'function') {
-					defer.done(callback);
-				}
-			});
+			this.updateSnippets(payload.snippets);
 		}
 	}
 }, {
-	beforeQueue: [],
-	afterQueue: [],
-	completeQueue: [],
+	beforeQueue: $.Callbacks(),
+	afterQueue: $.Callbacks(),
+	completeQueue: $.Callbacks(),
 	before: function (callback) {
-		this.beforeQueue.push(callback);
+		this.beforeQueue.add(callback);
 	},
 	after: function (callback) {
-		this.afterQueue.push(callback);
+		this.afterQueue.add(callback);
 	},
 	complete: function (callback) {
-		this.completeQueue.push(callback);
+		this.completeQueue.add(callback);
+	},
+	updateSnippets: function (snippets, back) {
+		var that = this;
+		var elements = [];
+		for (var i in snippets) {
+			var $el = this.getElement(i);
+			if ($el.get(0)) {
+				elements.push($el.get(0));
+			}
+			this.updateSnippet($el, snippets[i], back);
+		}
+		$(elements).promise().done(function () {
+			that.completeQueue.fire();
+		});
 	},
 	updateSnippet: function ($el, html, back) {
-		if (typeof $el === 'string') {
-			$el = this.getElement($el);
-		}
 		// Fix for setting document title in IE
 		if ($el.is('title')) {
 			document.title = html;
 		} else {
+			this.beforeQueue.fire($el);
 			this.applySnippet($el, html, back);
+			this.afterQueue.fire($el);
 		}
 	},
 	getElement: function (id) {
