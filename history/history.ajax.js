@@ -66,12 +66,8 @@ $.nette.ext('history', {
 		}, document.title, window.location.href);
 	},
 	before: function (xhr, settings) {
-		if (!settings.nette) {
-			this.href = null;
-		} else if (!settings.nette.form) {
-			this.href = settings.nette.ui.href;
-		} else if (settings.nette.form.method == 'get') {
-			this.href = settings.nette.ui.action || window.location.href;
+		if (settings.dislayUrl) {
+			this.href = settings.dislayUrl;
 		} else {
 			this.href = null;
 		}
