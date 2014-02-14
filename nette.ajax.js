@@ -313,7 +313,8 @@ $.nette.ext('validation', {
 		}
 
 		if (validate.form && analyze.form && !((analyze.isSubmit || analyze.isImage) && analyze.el.attr('formnovalidate') !== undefined)) {
-			if (analyze.form.get(0).onsubmit && analyze.form.get(0).onsubmit(e) === false) {
+			var ie = this.ie();
+			if (analyze.form.get(0).onsubmit && analyze.form.get(0).onsubmit((typeof ie !== 'undefined' && ie < 9) ? undefined : e) === false) {
 				e.stopImmediatePropagation();
 				e.preventDefault();
 				return false;
@@ -333,7 +334,17 @@ $.nette.ext('validation', {
 		return true;
 	}
 }, {
-	explicitNoAjax: false
+	explicitNoAjax: false,
+	ie: function (undefined) { // http://james.padolsey.com/javascript/detect-ie-in-js-using-conditional-comments/
+		var v = 3;
+		var div = document.createElement('div');
+		var all = div.getElementsByTagName('i');
+		while (
+        		div.innerHTML = '<!--[if gt IE ' + (++v) + ']><i></i><![endif]-->',
+			all[0]
+		);
+		return v > 4 ? v : undefined;
+	}
 });
 
 $.nette.ext('forms', {
