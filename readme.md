@@ -12,10 +12,9 @@ jQuery 1.7
 
 ## Installation
 
-1. Get the source code from Github.
-2. Copy `nette.ajax.js` to your directory with Javascript files.
-3. Link the file in your templates (usually in `app/@layout.latte`, after jQuery!).
-4. Put somewhere the initialization routine:
+1. Copy `nette.ajax.js` to your directory with Javascript files (you can use [Bower](http://bower.io/) for this).
+2. Link the file in your templates (usually in `app/@layout.latte`, after jQuery!).
+3. Put somewhere the initialization routine:
 
 ```js
 $(function () {
