@@ -200,6 +200,10 @@ Ajaxification of element ensures, that `e.preventDefault()` will be called. This
 
 New content of snippet with this attribute won't replace the old content, but it will rather be appended to it.
 
+### `data-ajax-prepend` (in `snippets` extension)
+
+New content of snippet with this attribute won't replace the old content, but it will rather be prepended to it.
+
 ### `data-ajax-validate` (in `validation` extension)
 
 Click on link or submittion of form is validated on various conditions. You can switch any of them:

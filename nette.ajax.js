@@ -438,6 +438,8 @@ $.nette.ext('snippets', {
 	applySnippet: function ($el, html, back) {
 		if (!back && $el.is('[data-ajax-append]')) {
 			$el.append(html);
+		} else if (!back && $el.is('[data-ajax-prepend]')) {
+			$el.prepend(html);
 		} else {
 			$el.html(html);
 		}
