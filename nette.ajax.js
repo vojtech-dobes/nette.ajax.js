@@ -456,6 +456,7 @@ $.nette.ext('snippets', {
 		// thx to @uestla (https://github.com/uestla)
 		return selector.replace(/[\!"#\$%&'\(\)\*\+,\.\/:;<=>\?@\[\\\]\^`\{\|\}~]/g, '\\$&');
 	},
+	// TrueHTML implementation taken from http://html5sec.org/trueHTML/trueHTML.js
 	mitigateMXSS: function (element) {
 		var that = this;
 		if (typeof element.innerHTML === 'string') {
