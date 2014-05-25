@@ -459,6 +459,9 @@ $.nette.ext('snippets', {
 	// TrueHTML implementation taken from http://html5sec.org/trueHTML/trueHTML.js
 	mitigateMXSS: function (element) {
 		var that = this;
+		if (this.mxssCache.indexOf(element) !== -1) {
+			return;
+		}
 		if (typeof element.innerHTML === 'string') {
 			Object.defineProperty(element, 'innerHTML', {
 				get: function () { return that.changeInnerHtmlHandler(this, 'innerHTML') },
@@ -469,8 +472,10 @@ $.nette.ext('snippets', {
 					this.insertAdjacentHTML('afterBegin', html);
 				}
 			});
+			this.mxssCache.push(element);
 		}
 	},
+	mxssCache: [],
 	changeInnerHtmlHandler: function (element, type) {
 		var serializer = new XMLSerializer();
 		var domstring = '';
