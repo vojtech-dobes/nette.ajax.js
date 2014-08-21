@@ -381,7 +381,7 @@ $.nette.ext('forms', {
 		}
 		
 		// https://developer.mozilla.org/en-US/docs/Web/Guide/Using_FormData_Objects#Sending_files_using_a_FormData_object
-		if ('FormData' in window) {
+		if (analyze.form.attr('method').toLowerCase() === 'post' && 'FormData' in window) {
 			var formData = new FormData(analyze.form[0]);
 			for (var i in formData) {
 				formData.append(i, formData[i]);
