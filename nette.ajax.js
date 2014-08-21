@@ -379,12 +379,30 @@ $.nette.ext('forms', {
 				formData[name + '.y'] = dataOffset[1];
 			}
 		}
+		
+		// https://developer.mozilla.org/en-US/docs/Web/Guide/Using_FormData_Objects#Sending_files_using_a_FormData_object
+		if (analyze.form.attr('method').toLowerCase() === 'post' && "FormData" in window) {
+			var formData2 = new FormData(analyze.form[0]);
+			for (var i in formData) {
+				formData2.append(i, formData[i]);
+			}
+			// how to handle 'string'?
+			if (typeof originalData !== 'string') {
+				for (var i in originalData) {
+					formData2.append(i, originalData[i]);
+				}
+			}
 
-		if (typeof originalData !== 'string') {
-			originalData = $.param(originalData);
+			settings.data = formData2;
+			settings.processData = false;
+			settings.contentType = false;
+		} else {
+			if (typeof originalData != 'string') {
+				originalData = $.param(originalData);
+			}
+			formData = $.param(formData);
+			settings.data = analyze.form.serialize() + (formData ? '&' + formData : '') + '&' + originalData;
 		}
-		formData = $.param(formData);
-		settings.data = analyze.form.serialize() + (formData ? '&' + formData : '') + '&' + originalData;
 	}
 });
 
