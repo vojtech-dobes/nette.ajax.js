@@ -363,28 +363,46 @@ $.nette.ext('forms', {
 		if (!analyze || !analyze.form) return;
 		var e = analyze.e;
 		var originalData = settings.data || {};
-		var formData = {};
+		var data = {};
 
 		if (analyze.isSubmit) {
-			formData[analyze.el.attr('name')] = analyze.el.val() || '';
+			data[analyze.el.attr('name')] = analyze.el.val() || '';
 		} else if (analyze.isImage) {
 			var offset = analyze.el.offset();
 			var name = analyze.el.attr('name');
 			var dataOffset = [ Math.max(0, e.pageX - offset.left), Math.max(0, e.pageY - offset.top) ];
 
 			if (name.indexOf('[', 0) !== -1) { // inside a container
-				formData[name] = dataOffset;
+				data[name] = dataOffset;
 			} else {
-				formData[name + '.x'] = dataOffset[0];
-				formData[name + '.y'] = dataOffset[1];
+				data[name + '.x'] = dataOffset[0];
+				data[name + '.y'] = dataOffset[1];
 			}
 		}
+		
+		// https://developer.mozilla.org/en-US/docs/Web/Guide/Using_FormData_Objects#Sending_files_using_a_FormData_object
+		if (analyze.form.attr('method').toLowerCase() === 'post' && 'FormData' in window) {
+			var formData = new FormData(analyze.form[0]);
+			for (var i in formData) {
+				formData.append(i, formData[i]);
+			}
 
-		if (typeof originalData !== 'string') {
-			originalData = $.param(originalData);
+			if (typeof originalData !== 'string') {
+				for (var i in originalData) {
+					formData.append(i, originalData[i]);
+				}
+			}
+
+			settings.data = formData;
+			settings.processData = false;
+			settings.contentType = false;
+		} else {
+			if (typeof originalData !== 'string') {
+				originalData = $.param(originalData);
+			}
+			data = $.param(data);
+			settings.data = analyze.form.serialize() + (data ? '&' + data : '') + '&' + originalData;
 		}
-		formData = $.param(formData);
-		settings.data = analyze.form.serialize() + (formData ? '&' + formData : '') + '&' + originalData;
 	}
 });
 
