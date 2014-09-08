@@ -11,6 +11,6 @@
 	],
 	"dependencies": {
 		"jquery": ">=1.7.0",
-		"nette-forms": "~0.0.3"
+		"nette-forms": "~2.2"
 	}
 }
