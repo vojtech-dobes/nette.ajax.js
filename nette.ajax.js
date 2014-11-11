@@ -3,10 +3,10 @@
  *
  * @copyright Copyright (c) 2009, 2010 Jan Marek
  * @copyright Copyright (c) 2009, 2010 David Grudl
- * @copyright Copyright (c) 2012 Vojtěch Dobeš
+ * @copyright Copyright (c) 2012-2014 Vojtěch Dobeš
  * @license MIT
  *
- * @version 1.2.2
+ * @version 2.0.0
  */
 
 (function(window, $, undefined) {
