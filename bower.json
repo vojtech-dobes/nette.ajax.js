@@ -1,5 +1,6 @@
 {
 	"name": "nette.ajax.js",
+	"version": "2.0.0",
 	"license": "MIT",
 	"keywords": ["nette", "ajax", "jquery"],
 	"main": "nette.ajax.js",
