@@ -148,12 +148,15 @@ var nette = function () {
 	/**
 	 * Executes AJAX request. Attaches listeners and events.
 	 *
-	 * @param  {object} settings
+	 * @param  {object|string} settings or URL
 	 * @param  {Element|null} ussually Anchor or Form
 	 * @param  {event|null} event causing the request
 	 * @return {jqXHR|null}
 	 */
 	this.ajax = function (settings, ui, e) {
+		if ($.type(settings) === 'string') {
+			settings = {url: settings};
+		}
 		if (!settings.nette && ui && e) {
 			var $el = $(ui), xhr, originalBeforeSend;
 			var analyze = settings.nette = {
