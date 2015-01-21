@@ -462,12 +462,59 @@ $.nette.ext('snippets', {
 		} else if (!back && $el.is('[data-ajax-prepend]')) {
 			$el.prepend(html);
 		} else {
+			this.setHtml($el, html);
+		}
+	},
+	setHtml: function ($el, html) {
+		if (this.isMXSSMitigationPossible()) {
+			this.mitigateMXSS($el.get(0));
 			$el.html(html);
+		} else {
+			//  ... @todo
 		}
 	},
 	escapeSelector: function (selector) {
 		// thx to @uestla (https://github.com/uestla)
 		return selector.replace(/[\!"#\$%&'\(\)\*\+,\.\/:;<=>\?@\[\\\]\^`\{\|\}~]/g, '\\$&');
+	},
+	// TrueHTML implementation taken from http://html5sec.org/trueHTML/trueHTML.js
+	mitigateMXSS: function (element) {
+		var that = this;
+		if (this.mxssCache.indexOf(element) !== -1) {
+			return;
+		}
+		if (typeof element.innerHTML === 'string') {
+			Object.defineProperty(element, 'innerHTML', {
+				get: function () { return that.changeInnerHtmlHandler(this, 'innerHTML') },
+				set: function (html) {
+					while (this.firstChild) {
+						this.removeChild(this.lastChild);
+					}
+					this.insertAdjacentHTML('afterBegin', html);
+				}
+			});
+			this.mxssCache.push(element);
+		}
+	},
+	mxssCache: [],
+	changeInnerHtmlHandler: function (element, type) {
+		var serializer = new XMLSerializer();
+		var domstring = '';
+		if (type === 'outerHTML') {
+			try {
+				domstring += serializer.serializeToString(element);
+			} catch(e) {}
+		} else {
+			for (var i in element.childNodes) {
+				try {
+					domstring += serializer.serializeToString(element.childNodes[i]);
+				} catch(e) {}
+			}
+		}
+		return domstring;
+	},
+	isMXSSMitigationPossible: function () {
+		// ... @todo
 	}
 });
 
