@@ -461,7 +461,7 @@ $.nette.ext('snippets', {
 			$el.append(html);
 		} else if (!back && $el.is('[data-ajax-prepend]')) {
 			$el.prepend(html);
-		} else {
+		} else if ($el.html() != html) {
 			$el.html(html);
 		}
 	},
