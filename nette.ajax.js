@@ -315,7 +315,10 @@ $.nette.ext('validation', {
 			} else if (explicitNoAjax) return false;
 		}
 
-		if (validate.form && analyze.form && !((analyze.isSubmit || analyze.isImage) && analyze.el.attr('formnovalidate') !== undefined)) {
+		if (validate.form && analyze.form) {
+			if (analyze.isSubmit || analyze.isImage) {
+				analyze.form.get(0)["nette-submittedBy"] = analyze.el.get(0);
+			}
 			var ie = this.ie();
 			if (analyze.form.get(0).onsubmit && analyze.form.get(0).onsubmit((typeof ie !== 'undefined' && ie < 9) ? undefined : e) === false) {
 				e.stopImmediatePropagation();
