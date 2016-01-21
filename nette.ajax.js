@@ -329,11 +329,11 @@ $.nette.ext('validation', {
 
 		if (validate.url) {
 			// thx to @vrana
-			urlToValidate = analyze.form ? settings.url : analyze.el.attr('href');
+			var urlToValidate = analyze.form ? settings.url : analyze.el.attr('href');
 			//Check if URL is absolute
 			if (/(?:^[a-z][a-z0-9+.-]*:|\/\/)/.test(urlToValidate)) {
 				//parse absolute URL
-				parsedUrl = new URL(urlToValidate);
+				var parsedUrl = new URL(urlToValidate);
 				if (/:|^#/.test(parsedUrl['pathname'] + parsedUrl['search'] + parsedUrl['hash'])) return false;
 			} else {
 				if (/:|^#/.test(urlToValidate)) return false
