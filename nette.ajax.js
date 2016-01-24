@@ -176,7 +176,7 @@ var nette = function () {
 			}
 
 			if (!settings.url) {
-				settings.url = analyze.form ? analyze.form.attr('action') : ui.href;
+				settings.url = analyze.form ? analyze.form.attr('action') || window.location.pathname + window.location.search : ui.href;
 			}
 			if (!settings.type) {
 				settings.type = analyze.form ? analyze.form.attr('method') : 'get';
