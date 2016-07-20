@@ -319,8 +319,7 @@ $.nette.ext('validation', {
 			if (analyze.isSubmit || analyze.isImage) {
 				analyze.form.get(0)["nette-submittedBy"] = analyze.el.get(0);
 			}
-			var ie = this.ie();
-			if (analyze.form.get(0).onsubmit && analyze.form.get(0).onsubmit((typeof ie !== 'undefined' && ie < 9) ? undefined : e) === false) {
+			if ((analyze.form.get(0).onsubmit ? analyze.form.triggerHandler('submit') : Nette.validateForm(analyze.form.get(0))) === false) {
 				e.stopImmediatePropagation();
 				e.preventDefault();
 				return false;
