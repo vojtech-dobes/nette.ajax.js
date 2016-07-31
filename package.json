@@ -1,0 +1,21 @@
+{
+  "name": "nette.ajax.js",
+  "version": "2.1.0",
+  "description": "Flexible utility script for AJAX in Nette Framework. Supports snippets, redirects etc. http://addons.nette.org/cs/nette-ajax-js",
+  "main": "nette.ajax.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vojtech-dobes/nette.ajax.js.git"
+  },
+  "keywords": [
+    "nette",
+    "ajax",
+    "jquery"
+  ],
+  "author": "Vojtech Dobes",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vojtech-dobes/nette.ajax.js/issues"
+  },
+  "homepage": "https://github.com/vojtech-dobes/nette.ajax.js#readme"
+}
