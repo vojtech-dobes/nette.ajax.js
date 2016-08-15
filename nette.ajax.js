@@ -385,7 +385,7 @@ $.nette.ext('forms', {
 				data[name + '.y'] = dataOffset[1];
 			}
 		}
-		
+
 		// https://developer.mozilla.org/en-US/docs/Web/Guide/Using_FormData_Objects#Sending_files_using_a_FormData_object
 		var formMethod = analyze.form.attr('method');
 		if (formMethod && formMethod.toLowerCase() === 'post' && 'FormData' in window) {
@@ -467,6 +467,8 @@ $.nette.ext('snippets', {
 			$el.prepend(html);
 		} else if ($el.html() != html) {
 			$el.html(html);
+		} else if (html.includes("<script>")) {
+		    $el.html(html);
 		}
 	},
 	escapeSelector: function (selector) {
