@@ -468,7 +468,7 @@ $.nette.ext('snippets', {
 		} else if ($el.html() != html) {
 			$el.html(html);
 		// inserted 15.8.2016 @JaxP        
-		} else if (html.includes("<script>")) {
+		} else if (new RegExp('<[^>]*script').test(html)) {
                         $el.html(html);
                 }
 	},
