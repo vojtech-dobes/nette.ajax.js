@@ -280,11 +280,7 @@ $.nette.ext('validation', {
 		else var analyze = settings.nette;
 		var e = analyze.e;
 
-		var validate = $.extend({
-			keys: true,
-			url: true,
-			form: true
-		}, settings.validate || (function () {
+		var validate = $.extend(this.defaults, settings.validate || (function () {
 			if (!analyze.el.is('[data-ajax-validate]')) return;
 			var attr = analyze.el.data('ajaxValidate');
 			if (attr === false) return {
@@ -339,6 +335,11 @@ $.nette.ext('validation', {
 		return true;
 	}
 }, {
+	defaults: {
+		keys: true,
+		url: true,
+		form: true
+	},
 	explicitNoAjax: false,
 	ie: function (undefined) { // http://james.padolsey.com/javascript/detect-ie-in-js-using-conditional-comments/
 		var v = 3;
