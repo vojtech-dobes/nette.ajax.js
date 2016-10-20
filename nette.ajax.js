@@ -315,7 +315,14 @@ $.nette.ext('validation', {
 			if (analyze.isSubmit || analyze.isImage) {
 				analyze.form.get(0)["nette-submittedBy"] = analyze.el.get(0);
 			}
-			if ((analyze.form.get(0).onsubmit ? analyze.form.triggerHandler('submit') : Nette.validateForm(analyze.form.get(0))) === false) {
+			var notValid;
+			if ((typeof Nette.version === 'undefined' || Nette.version == '2.3')) { // Nette 2.3 and older
+				var ie = this.ie();
+				notValid = (analyze.form.get(0).onsubmit && analyze.form.get(0).onsubmit((typeof ie !== 'undefined' && ie < 9) ? undefined : e) === false);
+			} else { // Nette 2.4 and up
+				notValid = ((analyze.form.get(0).onsubmit ? analyze.form.triggerHandler('submit') : Nette.validateForm(analyze.form.get(0))) === false)
+			}
+			if (notValid) {
 				e.stopImmediatePropagation();
 				e.preventDefault();
 				return false;
