@@ -9,7 +9,6 @@
 		"readme.md"
 	],
 	"dependencies": {
-		"jquery": ">=1.7.0",
-		"nette-forms": "~2.2"
+		"jquery": ">=1.7.0"
 	}
 }
