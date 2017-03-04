@@ -6,7 +6,7 @@
  * @copyright Copyright (c) 2012-2014 Vojtěch Dobeš
  * @license MIT
  *
- * @version 2.0.0
+ * @version 2.3.0
  */
 
 (function(window, $, undefined) {
