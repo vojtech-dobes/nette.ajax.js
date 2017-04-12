@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/vojtech-dobes/nette.ajax.js/issues"
   },
-  "homepage": "https://github.com/vojtech-dobes/nette.ajax.js#readme"
+  "homepage": "https://github.com/vojtech-dobes/nette.ajax.js#readme",
+  "dependencies": {
+    "jquery": ">=1.7.0"
+  }
 }
