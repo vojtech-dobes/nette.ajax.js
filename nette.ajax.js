@@ -415,6 +415,10 @@ $.nette.ext('forms', {
 				}
 			}
 
+			for (var i in data) {
+				formData.append(i, data[i]);
+			}
+
 			settings.data = formData;
 			settings.processData = false;
 			settings.contentType = false;
