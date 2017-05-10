@@ -482,7 +482,10 @@ $.nette.ext('snippets', {
 			$el.prepend(html);
 		} else if ($el.html() != html || /<[^>]*script/.test(html)) {
 			$el.html(html);
-		}
+		// inserted 15.8.2016 @JaxP        
+		} else if (new RegExp('<[^>]*script').test(html)) {
+                        $el.html(html);
+                }
 	},
 	escapeSelector: function (selector) {
 		// thx to @uestla (https://github.com/uestla)
