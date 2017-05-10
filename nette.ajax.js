@@ -495,7 +495,6 @@ $.nette.ext('redirect', {
 	success: function (payload) {
 		if (payload.redirect) {
 			window.location.href = payload.redirect;
-			return false;
 		}
 	}
 });
