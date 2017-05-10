@@ -9,7 +9,7 @@
  * @version 2.3.0
  */
 
-(function(window, $, undefined) {
+(function(window, $) {
 
 if (typeof $ !== 'function') {
 	return console.error('nette.ajax.js: jQuery is missing, load it please');
