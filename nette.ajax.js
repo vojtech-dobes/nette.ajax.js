@@ -37,9 +37,20 @@ var nette = function () {
 			var name = (typeof props === 'string') ? props : props.name;
 			var off = (typeof props === 'object') ? props.off || {} : {};
 			args.push(inner.self);
+
+			//Collect the hooks (callbacks, events or what you want to call it)
+			var hooks = [];
 			$.each(inner.on[name], function (index, reaction) {
 				if (reaction === undefined || $.inArray(index, off) !== -1) return true;
-				var temp = reaction.apply(inner.contexts[index], args);
+				hooks.push({callback: reaction, context: inner.contexts[index], priority: inner.contexts[index].priority || 0});
+			});
+			//Sort them by priority
+			hooks.sort(function (a, b) {
+				return b.priority - a.priority;
+			});
+			//Execute them in order from highest priority to lowest
+			$.each(hooks, function (index, hook) {
+				var temp = hook.callback.apply(hook.context, args);
 				return result = (temp === undefined || temp);
 			});
 			return result;

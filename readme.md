@@ -75,6 +75,19 @@ $.nette.ext('name', {
 });
 ```
 
+Priority of the extension hooks can be added through context of callbacks. Higher number means higher priority by default it is 0.
+
+```
+$.nette.ext('name', {
+    event1: function () {
+    },
+    event2: ...
+}, {
+	priority: 100
+    // ... shared context (this) of all callbacks
+});
+```
+
 First argument is name. It's optional.
 
 Second argument should be hash of callbacks with keys corresponding to names of events. These events are available:
