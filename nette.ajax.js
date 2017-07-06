@@ -14,6 +14,8 @@
 if (typeof $ !== 'function') {
 	return console.error('nette.ajax.js: jQuery is missing, load it please');
 }
+// Optional nette-forms
+Nette = Nette || {};
 
 var nette = function () {
 	var inner = {
