@@ -564,3 +564,12 @@ $.nette.ext('init', {
 });
 
 })(window, window.jQuery);
+
+if (typeof Nette === 'undefined') {
+    $.nette.ext('no-nette-forms', {
+        init: function ()
+        {
+            Nette = {};
+        }
+    });
+}
