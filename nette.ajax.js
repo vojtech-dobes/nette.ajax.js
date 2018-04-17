@@ -404,7 +404,18 @@ $.nette.ext('forms', {
 		// https://developer.mozilla.org/en-US/docs/Web/Guide/Using_FormData_Objects#Sending_files_using_a_FormData_object
 		var formMethod = analyze.form.attr('method');
 		if (formMethod && formMethod.toLowerCase() === 'post' && 'FormData' in window) {
-			var formData = new FormData(analyze.form[0]);
+			// clone form and remove empty file inputs as these causes Safari 11 to stall
+			// https://stackoverflow.com/questions/49672992/ajax-request-fails-when-sending-formdata-including-empty-file-input-in-safari
+			var clonedForm  = $.clone(analyze.form[0]);
+			for (i = 0; i < clonedForm.elements.length; i++) {
+				if (clonedForm.elements[i].type === 'file') {
+					if (clonedForm.elements[i].value === '') {
+						clonedForm.elements[i].parentNode.removeChild(clonedForm.elements[i]);
+					}
+				}
+			}
+
+			var formData = new FormData(clonedForm);
 			for (var i in data) {
 				formData.append(i, data[i]);
 			}
