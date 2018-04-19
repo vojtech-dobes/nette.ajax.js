@@ -475,7 +475,10 @@ $.nette.ext('snippets', {
 	updateSnippet: function ($el, html, back) {
 		// Fix for setting document title in IE
 		if ($el.is('title')) {
-			document.title = html;
+			// 11.1.2018 bug fix, without innerHTML escaped string will not be correctly displayed
+			// https://forum.nette.org/en/28622-nette-ajax-change-title-snippet-and-escaping
+			// https://stackoverflow.com/questions/413439/how-to-dynamically-change-a-web-pages-title
+			document.title.innerHTML = html;
 		} else {
 			this.beforeQueue.fire($el);
 			this.applySnippet($el, html, back);
