@@ -385,12 +385,12 @@ $.nette.ext('forms', {
 		var e = analyze.e;
 		var originalData = settings.data || {};
 		var data = {};
+		var name = undefined;
 
-		if (analyze.isSubmit) {
-			data[analyze.el.attr('name')] = analyze.el.val() || '';
-		} else if (analyze.isImage) {
+		if (analyze.isSubmit && (name = analyze.el.attr('name'))) {
+			data[name] = analyze.el.val() || '';
+		} else if (analyze.isImage && (name = analyze.el.attr('name'))) {
 			var offset = analyze.el.offset();
-			var name = analyze.el.attr('name');
 			var dataOffset = [ Math.max(0, e.pageX - offset.left), Math.max(0, e.pageY - offset.top) ];
 
 			if (name.indexOf('[', 0) !== -1) { // inside a container
@@ -400,7 +400,7 @@ $.nette.ext('forms', {
 				data[name + '.y'] = dataOffset[1];
 			}
 		}
-		
+
 		// https://developer.mozilla.org/en-US/docs/Web/Guide/Using_FormData_Objects#Sending_files_using_a_FormData_object
 		var formMethod = analyze.form.attr('method');
 		if (formMethod && formMethod.toLowerCase() === 'post' && 'FormData' in window) {
@@ -433,7 +433,7 @@ $.nette.ext('forms', {
 				originalData = $.param(originalData);
 			}
 			data = $.param(data);
-			settings.data = analyze.form.serialize() + (data ? '&' + data : '') + '&' + originalData;
+			settings.data = analyze.form.serialize() + (data ? '&' + data : '') + (originalData ? '&' + originalData : '');
 		}
 	}
 });
