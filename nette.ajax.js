@@ -163,6 +163,7 @@ var nette = function () {
 				e: e,
 				ui: ui,
 				el: $el,
+			    	isTr: $el.is('tr'),
 				isForm: $el.is('form'),
 				isSubmit: $el.is('input[type=submit]') || $el.is('button[type=submit]'),
 				isImage: $el.is('input[type=image]'),
@@ -174,7 +175,9 @@ var nette = function () {
 			} else if (analyze.isForm) {
 				analyze.form = analyze.el;
 			}
-
+		    	if (!settings.tr) {
+				settings.url = $el.attr("href"); 
+			}
 			if (!settings.url) {
 				settings.url = analyze.form ? analyze.form.attr('action') || window.location.pathname + window.location.search : ui.href;
 			}
@@ -561,6 +564,7 @@ $.nette.ext('load', {
 $.nette.ext('init', {
 	load: function (rh) {
 		$(this.linkSelector).off('click.nette', rh).on('click.nette', rh);
+	    	$(this.rowSelector).off('click.nette', rh).on('click.nette', rh);
 		$(this.formSelector).off('submit.nette', rh).on('submit.nette', rh)
 			.off('click.nette', ':image', rh).on('click.nette', ':image', rh)
 			.off('click.nette', ':submit', rh).on('click.nette', ':submit', rh);
@@ -569,6 +573,7 @@ $.nette.ext('init', {
 	}
 }, {
 	linkSelector: 'a.ajax',
+	rowSelector: 'tr.ajax',
 	formSelector: 'form.ajax',
 	buttonSelector: 'input.ajax[type="submit"], button.ajax[type="submit"], input.ajax[type="image"]'
 });
