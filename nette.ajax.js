@@ -293,7 +293,7 @@ $.nette.ext('validation', {
 		var passEvent = false;
 		if (analyze.el.attr('data-ajax-pass') !== undefined) {
 			passEvent = analyze.el.data('ajaxPass');
-			passEvent = typeof passEvent === 'bool' ? passEvent : true;
+			passEvent = typeof passEvent === 'boolean' ? passEvent : true;
 		}
 
 		if (validate.keys) {
