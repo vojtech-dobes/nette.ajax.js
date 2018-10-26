@@ -418,7 +418,27 @@ $.nette.ext('forms', {
 			// remove empty file inputs as these causes Safari 11 to stall
 			// https://stackoverflow.com/questions/49672992/ajax-request-fails-when-sending-formdata-including-empty-file-input-in-safari
 			if (formData.entries && navigator.userAgent.match(/version\/11(\.[0-9]*)? safari/i)) {
-				for (var pair of formData.entries()) {
+				// FormData must be polyfilled in IE 11 (https://github.com/jimmywarting/FormData)
+				// for .. of loop is unsupported in IE 11 causing js exception, but it cannot be fixed by for .. in 
+				// because FormData.entries(), .keys() etc. returns Symbol iterator which is not iterable by for .. in loop
+				// Symbol iterators is also unsupported in IE 11, so only option to fix it cross-browser is to convert iterator to array.
+				var formDataKeys = formData.keys();
+				var entries = [];
+				var iterationDone = false;
+				while (!iterationDone) {
+					try {
+						var keyItem = formDataKeys.next();
+						iterationDone = keyItem.done;
+						if (!iterationDone) {
+							entries.push([keyItem.value, formData.get(keyItem.value)]);
+						}
+					} catch (error) {
+						iterationDone = true
+					}
+				}
+				
+				for (var index in entries) {
+					var pair = entries[index];
 					if (pair[1] instanceof File && pair[1].name === '' && pair[1].size === 0) {
 						formData.delete(pair[0]);
 					}
