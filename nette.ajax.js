@@ -418,7 +418,7 @@ $.nette.ext('forms', {
 			// remove empty file inputs as these causes Safari 11 to stall
 			// https://stackoverflow.com/questions/49672992/ajax-request-fails-when-sending-formdata-including-empty-file-input-in-safari
 			if (formData.entries && navigator.userAgent.match(/version\/11(\.[0-9]*)? safari/i)) {
-				for (var pair of formData.entries()) {
+				for (var pair in formData.entries()) {
 					if (pair[1] instanceof File && pair[1].name === '' && pair[1].size === 0) {
 						formData.delete(pair[0]);
 					}
