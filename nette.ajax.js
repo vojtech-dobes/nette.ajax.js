@@ -561,7 +561,7 @@ $.nette.ext('state', {
     },
 	success: function (payload) {
 		if (payload.state) {
-			this.state = Object.assign(this.state || {}, payload.state);
+			this.state = payload.state;
 		}
 	}
 }, {state: null});
