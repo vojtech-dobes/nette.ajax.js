@@ -520,7 +520,7 @@ $.nette.ext('state', {
         const getBaseUrl = fullUrl => {
             const queryIndex = oldUrl.indexOf("?");
             return queryIndex >= 0
-                ? oldUrl.slice(0, queryIndex + 1)
+                ? oldUrl.slice(0, queryIndex)
                 : oldUrl;
         };
 
