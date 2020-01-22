@@ -546,7 +546,15 @@ $.nette.ext('state', {
         let params = '';
 
         for (let [key, value] of Object.entries(Object.assign(this.state || {}, decodeURLParams(oldUrl)))) {
-            params += key + '=' + (encodeURIComponent(value) || '') + '&';
+            if (Array.isArray(value)) {
+                for (let arrayValue of value) {
+                    params += encodeURIComponent(key + '[]') + '=' + encodeURIComponent(arrayValue || '') + '&';
+                }
+
+                continue;
+            }
+
+            params += encodeURIComponent(key) + '=' + encodeURIComponent(value || '') + '&';
         }
 
         settings.url = baseUrl + (params ? ('?' + params) : '');
