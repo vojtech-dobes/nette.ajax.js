@@ -512,9 +512,46 @@ $.nette.ext('redirect', {
 
 // current page state
 $.nette.ext('state', {
+    before: function (xhr, settings) {
+        if (settings.noState || $(settings.el).data('ajax-no-state')) {
+            return;
+        }
+
+        const decodeURLParams = fullUrl => {
+            if (oldUrl.indexOf("?") === -1) {
+                return {};
+            }
+
+            const hashes = fullUrl.slice(oldUrl.indexOf("?") + 1).split("&");
+            return hashes.reduce((params, hash) => {
+                const split = hash.indexOf("=");
+
+                if (split < 0) {
+                    return Object.assign(params, {
+                        [hash]: null
+                    });
+                }
+
+                const key = hash.slice(0, split);
+                const val = hash.slice(split + 1);
+
+                return Object.assign(params, { [key]: decodeURIComponent(val) });
+            }, {});
+        };
+
+        const oldUrl = settings.url;
+        const baseUrl = oldUrl.slice(0, oldUrl.indexOf("?") + 1);
+        let params = '';
+
+        for (let [key, value] of Object.entries(Object.assign(this.state || {}, decodeURLParams(oldUrl)))) {
+            params += key + '=' + (value || '');
+        }
+
+        settings.url = baseUrl + (params ? ('?' + params) : '');
+    },
 	success: function (payload) {
 		if (payload.state) {
-			this.state = payload.state;
+			this.state = Object.assign(this.state || {}, payload.state);
 		}
 	}
 }, {state: null});
