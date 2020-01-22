@@ -518,11 +518,13 @@ $.nette.ext('state', {
         }
 
         const decodeURLParams = fullUrl => {
-            if (oldUrl.indexOf("?") === -1) {
+            const queryIndex = oldUrl.indexOf("?");
+
+            if (queryIndex === -1) {
                 return {};
             }
 
-            const hashes = fullUrl.slice(oldUrl.indexOf("?") + 1).split("&");
+            const hashes = fullUrl.slice(queryIndex + 1).split("&");
             return hashes.reduce((params, hash) => {
                 const split = hash.indexOf("=");
 
