@@ -517,6 +517,13 @@ $.nette.ext('state', {
             return;
         }
 
+        const getBaseUrl = fullUrl => {
+            const queryIndex = oldUrl.indexOf("?");
+            return queryIndex >= 0
+                ? oldUrl.slice(0, queryIndex + 1)
+                : oldUrl;
+        };
+
         const decodeURLParams = fullUrl => {
             const queryIndex = oldUrl.indexOf("?");
 
@@ -541,23 +548,29 @@ $.nette.ext('state', {
             }, {});
         };
 
-        const oldUrl = settings.url;
-        const baseUrl = oldUrl.slice(0, oldUrl.indexOf("?"));
-        let params = '';
+        const encodeURLParams = allParams => {
+            let paramString = '';
 
-        for (let [key, value] of Object.entries(Object.assign(this.state || {}, decodeURLParams(oldUrl)))) {
-            if (Array.isArray(value)) {
-                for (let arrayValue of value) {
-                    params += encodeURIComponent(key + '[]') + '=' + encodeURIComponent(arrayValue || '') + '&';
+            for (let [key, value] of Object.entries(allParams)) {
+                if (Array.isArray(value)) {
+                    for (let arrayValue of value) {
+                        paramString += encodeURIComponent(key + '[]') + '=' + encodeURIComponent(arrayValue || '') + '&';
+                    }
+
+                    continue;
                 }
 
-                continue;
+                paramString += encodeURIComponent(key) + '=' + encodeURIComponent(value || '') + '&';
             }
 
-            params += encodeURIComponent(key) + '=' + encodeURIComponent(value || '') + '&';
-        }
+            return paramString ? ('?' + paramString) : paramString;
+        };
 
-        settings.url = baseUrl + (params ? ('?' + params) : '');
+        const oldUrl = settings.url;
+        const baseUrl = getBaseUrl(oldUrl);
+        const newParams = encodeURLParams(Object.assign(this.state || {}, decodeURLParams(oldUrl)));
+
+        settings.url = baseUrl + newParams;
     },
 	success: function (payload) {
 		if (payload.state) {
