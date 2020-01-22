@@ -512,7 +512,7 @@ $.nette.ext('redirect', {
 
 // current page state
 $.nette.ext('state', {
-    before: function (xhr, settings) {
+    prepare: function (settings) {
         if (settings.noState || $(settings.el).data('ajax-no-state')) {
             return;
         }
@@ -540,11 +540,11 @@ $.nette.ext('state', {
         };
 
         const oldUrl = settings.url;
-        const baseUrl = oldUrl.slice(0, oldUrl.indexOf("?") + 1);
+        const baseUrl = oldUrl.slice(0, oldUrl.indexOf("?"));
         let params = '';
 
         for (let [key, value] of Object.entries(Object.assign(this.state || {}, decodeURLParams(oldUrl)))) {
-            params += key + '=' + (value || '');
+            params += key + '=' + (encodeURIComponent(value) || '') + '&';
         }
 
         settings.url = baseUrl + (params ? ('?' + params) : '');
