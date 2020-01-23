@@ -554,13 +554,21 @@ $.nette.ext('state', {
             for (let [key, value] of Object.entries(allParams)) {
                 if (Array.isArray(value)) {
                     for (let arrayValue of value) {
-                        paramString += encodeURIComponent(key + '[]') + '=' + encodeURIComponent(arrayValue || '') + '&';
+                        paramString += ''.concat(key, encodeURIComponent('[]'), '=', encodeURIComponent(arrayValue || ''), '&');
                     }
 
                     continue;
                 }
 
-                paramString += encodeURIComponent(key) + '=' + encodeURIComponent(value || '') + '&';
+                if (value !== null && typeof value === 'object') {
+                    for (let [arrayKey, arrayValue] of Object.entries(value)) {
+                        paramString += ''.concat(key, encodeURIComponent('['.concat(arrayKey, ']')), '=', encodeURIComponent(arrayValue || ''), '&');
+                    }
+
+                    continue;
+                }
+
+                paramString += ''.concat(key, '=', encodeURIComponent(value || ''), '&');
             }
 
             return paramString ? ('?' + paramString) : paramString;
