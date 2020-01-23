@@ -512,6 +512,74 @@ $.nette.ext('redirect', {
 
 // current page state
 $.nette.ext('state', {
+    prepare: function (settings) {
+        if (settings.noState || $(settings.el).data('ajax-no-state')) {
+            return;
+        }
+
+        const getBaseUrl = fullUrl => {
+            const queryIndex = oldUrl.indexOf("?");
+            return queryIndex >= 0
+                ? oldUrl.slice(0, queryIndex)
+                : oldUrl;
+        };
+
+        const decodeURLParams = fullUrl => {
+            const queryIndex = oldUrl.indexOf("?");
+
+            if (queryIndex === -1) {
+                return {};
+            }
+
+            const hashes = fullUrl.slice(queryIndex + 1).split("&");
+            return hashes.reduce((params, hash) => {
+                const split = hash.indexOf("=");
+
+                if (split < 0) {
+                    return Object.assign(params, {
+                        [hash]: null
+                    });
+                }
+
+                const key = hash.slice(0, split);
+                const val = hash.slice(split + 1);
+
+                return Object.assign(params, { [key]: decodeURIComponent(val) });
+            }, {});
+        };
+
+        const encodeURLParams = allParams => {
+            let paramString = '';
+
+            for (let [key, value] of Object.entries(allParams)) {
+                if (Array.isArray(value)) {
+                    for (let arrayValue of value) {
+                        paramString += ''.concat(key, encodeURIComponent('[]'), '=', encodeURIComponent(arrayValue || ''), '&');
+                    }
+
+                    continue;
+                }
+
+                if (value !== null && typeof value === 'object') {
+                    for (let [arrayKey, arrayValue] of Object.entries(value)) {
+                        paramString += ''.concat(key, encodeURIComponent('['.concat(arrayKey, ']')), '=', encodeURIComponent(arrayValue || ''), '&');
+                    }
+
+                    continue;
+                }
+
+                paramString += ''.concat(key, '=', encodeURIComponent(value || ''), '&');
+            }
+
+            return paramString ? ('?' + paramString) : paramString;
+        };
+
+        const oldUrl = settings.url;
+        const baseUrl = getBaseUrl(oldUrl);
+        const newParams = encodeURLParams(Object.assign(this.state || {}, decodeURLParams(oldUrl)));
+
+        settings.url = baseUrl + newParams;
+    },
 	success: function (payload) {
 		if (payload.state) {
 			this.state = payload.state;
