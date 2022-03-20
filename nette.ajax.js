@@ -316,7 +316,9 @@ $.nette.ext('validation', {
 				analyze.form.get(0)["nette-submittedBy"] = analyze.el.get(0);
 			}
 			var notValid;
-			if ((typeof Nette.version === 'undefined' || Nette.version == '2.3')) { // Nette 2.3 and older
+			if (analyze.form.get(0).getAttribute('novalidate') === 'novalidate') {
+				notValid = false;
+			} else if ((typeof Nette.version === 'undefined' || Nette.version == '2.3')) { // Nette 2.3 and older
 				var ie = this.ie();
 				notValid = (analyze.form.get(0).onsubmit && analyze.form.get(0).onsubmit((typeof ie !== 'undefined' && ie < 9) ? undefined : e) === false);
 			} else { // Nette 2.4 and up
